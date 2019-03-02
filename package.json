@@ -8,6 +8,7 @@
   "dependencies": {
     "@material-ui/core": "^3.9.2",
     "csvtojson": "^2.0.8",
+    "dotenv": "^6.2.0",
     "electron": "^4.0.5",
     "json2csv": "^4.3.5",
     "react": "^16.8.3",
