@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import ReactDataGrid from "react-data-grid";
+import qs from "qs";
 import './App.css';
 
 const electron = window.require('electron');
@@ -184,24 +185,83 @@ class App extends Component {
     });
   };
 
+  startPiplSearch = e => {
+    const { rows } = this.state;
+    const propertyDictionary = {
+      "First Name": "names",
+      "Last Name": "names",
+      "Email1": "emails",
+      "Email2": "emails",
+      "Phone1": "phones",
+      "Phone2": "phones",
+      "Mailing Address": "addresses"
+    }
+
+    rows.forEach(row => {
+      const person = {
+        names: [],
+        emails: [],
+        phones: []
+      }
+
+      const nameObject = {};
+
+      if (row["First Name"]) {
+        nameObject.first = row["First Name"];
+      }
+
+      if (row["Last Name"]) {
+        nameObject.last = row["Last Name"];
+      }
+
+      person.names.push(nameObject);
+
+      for (let key in row) {
+        if (key !== "First Name" && key !== "Last Name" && key !== "Mailing Address" && key !== "id") {
+          if (row[key]) {
+            const arrayProperty = propertyDictionary[key];
+            person[arrayProperty].push(row[key]);
+          }
+        }
+      }
+
+      if (row["Mailing Address"]) {
+        person.addresses = [];
+        person.addresses.push({ raw: row["Mailing Address"] });
+      }
+
+      const requestObject = { person: JSON.stringify(person), key: window.process.env.PIPL_API_KEY };
+      const queryString = qs.stringify(requestObject);
+      const queryObject = qs.parse(queryString);
+      console.log(queryString);
+      console.log(queryObject);
+    });
+  }
+
   render() {
     return (
-      <ReactDataGrid
-        columns={this.state.columns}
-        minHeight={window.visualViewport.height}
-        rowGetter={i => this.state.rows[i]}
-        rowsCount={this.state.rows.length}
-        // rowSelection={{
-        //   enableShiftSelect: false,
-        //   onRowsSelected: this.onRowsSelected,
-        //   onRowsDeselected: this.onRowsDeselected,
-        //   selectBy: {
-        //     indexes: this.state.selectedIndexes
-        //   }
-        // }}
-        onGridRowsUpdated={this.onGridRowsUpdated}
-        enableCellSelect={true}
-      />
+      <div>
+        <div style={{ display: "flex", justifyContent: "space-between", padding: "15px" }}>
+          <div>{this.state.filePath}</div>
+          <div><button onClick={this.startPiplSearch}>Start Pipl Search</button></div>
+        </div>
+        <ReactDataGrid
+          columns={this.state.columns}
+          minHeight={window.visualViewport.height}
+          rowGetter={i => this.state.rows[i]}
+          rowsCount={this.state.rows.length}
+          // rowSelection={{
+          //   enableShiftSelect: false,
+          //   onRowsSelected: this.onRowsSelected,
+          //   onRowsDeselected: this.onRowsDeselected,
+          //   selectBy: {
+          //     indexes: this.state.selectedIndexes
+          //   }
+          // }}
+          onGridRowsUpdated={this.onGridRowsUpdated}
+          enableCellSelect={true}
+        />
+      </div>
     );
   }
 }
