@@ -1,3 +1,15 @@
 .App {
   text-align: center;
 }
+
+#api-key-modal {
+  text-align: center;
+}
+
+.api-key-modal__content {
+  margin: 30px 0;
+}
+
+.api-key-modal__input {
+  width: 80%;
+}

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import ReactDataGrid from "react-data-grid";
 import qs from "qs";
 import './App.css';
+import ApiKeyModal from "./components/ApiKeyModal/ApiKeyModal";
 
 const electron = window.require('electron');
 const { remote } = electron;
@@ -148,14 +149,30 @@ for(let i = 0; i < 50; i++) {
 };
 
 class App extends Component {
-  state = { columns, filePath: '', rows, selectedIndexes: [] }
+  state = {
+    columns,
+    filePath: '',
+    openApiKeyModal: false,
+    rows,
+    selectedIndexes: []
+  }
   
   componentDidMount() {
     setTimeout(() => {
       window.dispatchEvent(new Event('resize'));
     }, 0);
 
+    const PIPL_API_KEY = window.process.env.PIPL_API_KEY;
+
+    // if (PIPL_API_KEY !== "" || typeof PIPL_API_KEY === undefined) {
+      this.openApiKeyModal(PIPL_API_KEY);
+    // }
+
     generateMenu(this);
+  }
+
+  openApiKeyModal = (piplApiKey) => {
+    this.setState({ openApiKeyModal: true, piplApiKey });
   }
 
   onGridRowsUpdated = ({ fromRow, toRow, updated }) => {
@@ -238,18 +255,42 @@ class App extends Component {
     });
   }
 
+  savePiplApiKey = () => {
+    const { piplApiKey } = this.state;
+
+    fs.writeFile('.env', `PIPL_API_KEY=${piplApiKey}`, (err) => {
+      if (err) {
+        throw err;
+      }
+      window.process.env.PIPL_API_KEY = piplApiKey;
+    });
+  }
+
+  updatePiplApiKey = e => {
+    const piplApiKey = e.target.value;
+
+    this.setState({ piplApiKey });
+  }
+
   render() {
+    const { filePath, openApiKeyModal, piplApiKey, rows } = this.state;
     return (
       <div>
+        <ApiKeyModal
+          openApiKeyModal={openApiKeyModal}
+          piplApiKey={piplApiKey}
+          savePiplApiKey={this.savePiplApiKey}
+          updatePiplApiKey={this.updatePiplApiKey}
+        />
         <div style={{ display: "flex", justifyContent: "space-between", padding: "15px" }}>
-          <div>{this.state.filePath}</div>
+          <div>{filePath}</div>
           <div><button onClick={this.startPiplSearch}>Start Pipl Search</button></div>
         </div>
         <ReactDataGrid
           columns={this.state.columns}
           minHeight={window.visualViewport.height}
-          rowGetter={i => this.state.rows[i]}
-          rowsCount={this.state.rows.length}
+          rowGetter={i => rows[i]}
+          rowsCount={rows.length}
           // rowSelection={{
           //   enableShiftSelect: false,
           //   onRowsSelected: this.onRowsSelected,
