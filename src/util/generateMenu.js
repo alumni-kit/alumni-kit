@@ -23,6 +23,7 @@ const generateMenu = (reactAppContext) => {
                   .fromFile(filePath)
                   .on('header', (headers) => {
                     const requiredFields = {
+                      "id": "id",
                       "Status": "Status",
                       "First Name": "First Name",
                       "Last Name": "Last Name",
