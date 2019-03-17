@@ -1,160 +1,16 @@
+import generateMenu from './util/generateMenu';
 import React, { Component } from 'react';
 import ReactDataGrid from "react-data-grid";
 import qs from "qs";
 import './App.css';
 import ApiKeyModal from "./components/ApiKeyModal/ApiKeyModal";
 
-const electron = window.require('electron');
-const { remote } = electron;
-const { dialog, Menu } = remote;
-
-const csvtojson = window.require("csvtojson");
-const jsontocsv = window.require('json2csv').Parser;
-const fs = window.require('fs');
-
-const generateMenu = (reactAppContext) => {
-  const template = [
-    {
-      label: 'File',
-      submenu: [
-        {
-          label: "Open",
-          click () {
-            dialog.showOpenDialog({
-              filters: [{ name: 'Comma Separated Values', extensions: ['csv'] }],
-              properties: ['openFile']
-            }, (filePaths) => {
-              const filePath = filePaths[0];
-              csvtojson()
-                .fromFile(filePath)
-                .on('header', (headers) => {
-                  const columns = headers.map((header) => {
-                    return {
-                      editable: false,
-                      key: header,
-                      name: header,
-                      width: 240,
-                    };
-                  });
-                  reactAppContext.setState({ columns });
-                })
-                .then((rowsFromCSV)=>{
-                  const rows = rowsFromCSV.map((row, index) => {
-                    row.id = index;
-                    return row;
-                  })
-
-                  reactAppContext.setState({ filePath, rows });
-                });
-            });
-          }
-        },
-        {
-          label: "Save",
-          click () {
-            if (!reactAppContext.state.filePath) {
-              return;
-            }
-            const fields = reactAppContext.state.columns.map(column => column.name);
-            const filePath = reactAppContext.state.filePath;
-            const rows = reactAppContext.state.rows;
-
-            const parser = new jsontocsv({ fields });
-            const csv = parser.parse(rows);
-            fs.writeFile(filePath, csv, (err) => {
-              if (err) throw err;
-              console.log('The file has been saved!');
-            });
-          }
-        },
-        {
-          label: "Save As",
-          click () {
-            dialog.showSaveDialog({
-              filters: [{ name: 'Comma Separated Values', extensions: ['csv'] }],
-            }, (filePath) => {
-              const fields = reactAppContext.state.columns.map(column => column.name);
-              const rows = reactAppContext.state.rows;
-              const parser = new jsontocsv({ fields });
-              const csv = parser.parse(rows);
-              fs.writeFile(filePath, csv, (err) => {
-                if (err) throw err;
-              })
-            });
-          }
-        }
-      ]
-    },
-    {
-      label: 'Edit',
-      submenu: [
-        { role: 'undo' },
-        { role: 'redo' },
-        { type: 'separator' },
-        { role: 'cut' },
-        { role: 'copy' },
-        { role: 'paste' },
-        { role: 'pasteandmatchstyle' },
-        { role: 'delete' },
-        { role: 'selectall' }
-      ]
-    },
-    {
-      label: 'View',
-      submenu: [
-        { role: 'reload' },
-        { role: 'forcereload' },
-        { role: 'toggledevtools' },
-        { type: 'separator' },
-        { role: 'resetzoom' },
-        { role: 'zoomin' },
-        { role: 'zoomout' },
-        { type: 'separator' },
-        { role: 'togglefullscreen' }
-      ]
-    },
-    {
-      role: 'window',
-      submenu: [
-        { role: 'minimize' },
-        { role: 'close' }
-      ]
-    },
-    {
-      role: 'help',
-      submenu: [
-        {
-          label: 'Learn More',
-          click () { electron.shell.openExternal('https://electronjs.org') }
-        }
-      ]
-    }
-  ]
-  
-  const menu = Menu.buildFromTemplate(template);
-  Menu.setApplicationMenu(menu);
-}
-
-const columns = [
-  { key: "0", name: "", editable: false },
-  { key: "1", name: "", editable: false },
-  { key: "2", name: "", editable: false },
-  { key: "3", name: "", editable: false },
-  { key: "4", name: "", editable: false }
-];
-
-const rows = [];
-for(let i = 0; i < 50; i++) {
-  rows.push({ id: i });
-};
-
 class App extends Component {
   state = {
-    columns,
+    columns: [],
     filePath: '',
     openApiKeyModal: false,
-    rows,
-    selectedIndexes: []
+    rows: [],
   }
   
   componentDidMount() {
@@ -179,34 +35,7 @@ class App extends Component {
     this.setState({ openApiKeyModal: true, piplApiKey });
   }
 
-  onGridRowsUpdated = ({ fromRow, toRow, updated }) => {
-    this.setState(state => {
-      const rows = state.rows.slice();
-      for (let i = fromRow; i <= toRow; i++) {
-        rows[i] = { ...rows[i], ...updated };
-      }
-      return { rows };
-    });
-  };
-
-  onRowsSelected = rows => {
-    this.setState({
-      selectedIndexes: this.state.selectedIndexes.concat(
-        rows.map(r => r.rowIdx)
-      )
-    });
-  };
-
-  onRowsDeselected = rows => {
-    let rowIndexes = rows.map(r => r.rowIdx);
-    this.setState({
-      selectedIndexes: this.state.selectedIndexes.filter(
-        i => rowIndexes.indexOf(i) === -1
-      )
-    });
-  };
-
-  startPiplSearch = e => {
+  startPiplSearch = async e => {
     const { rows } = this.state;
     const propertyDictionary = {
       "First Name": "names",
@@ -218,7 +47,7 @@ class App extends Component {
       "Mailing Address": "addresses"
     }
 
-    rows.forEach(row => {
+    const updatedRows = await rows.map(async row => {
       const person = {
         names: [],
         emails: [],
@@ -253,10 +82,30 @@ class App extends Component {
 
       const requestObject = { person: JSON.stringify(person), key: window.process.env.PIPL_API_KEY };
       const queryString = qs.stringify(requestObject);
-      const queryObject = qs.parse(queryString);
-      console.log(queryString);
-      console.log(queryObject);
+      const newRow = await this.getNewRow(queryString);
+      return Object.assign(row, newRow);
     });
+
+    Promise.all(updatedRows)
+      .then(rows => this.setState({ rows }));
+  }
+
+  getNewRow = async () => {
+    return await fetch('/temp/person.json')
+      .then(response => response.json())
+      .then(json => {
+        const possiblePerson = json.possible_persons[0];
+        const row = {
+          "First Name": possiblePerson.names[0].first,
+          "Last Name": possiblePerson.names[0].last,
+          "Email1": (possiblePerson.emails || [])[0] ? possiblePerson.emails[0].address : "",
+          "Email2": (possiblePerson.emails || [])[1] ? possiblePerson.emails[1].address : "",
+          "Phone1": possiblePerson.phones[0] ? possiblePerson.phones[0].display : "",
+          "Phone2": possiblePerson.phones[1] ? possiblePerson.phones[1].display : "",
+          "Mailing Address": possiblePerson.addresses[0] ? possiblePerson.addresses[0].display : "",
+        }
+        return row;
+      });
   }
 
   savePiplApiKey = () => {
@@ -280,7 +129,7 @@ class App extends Component {
   render() {
     const { filePath, openApiKeyModal, piplApiKey, rows } = this.state;
     return (
-      <div>
+      <div className="app">
         <ApiKeyModal
           closeApiKeyModal={this.closeApiKeyModal}
           openApiKeyModal={openApiKeyModal}
@@ -288,25 +137,16 @@ class App extends Component {
           savePiplApiKey={this.savePiplApiKey}
           updatePiplApiKey={this.updatePiplApiKey}
         />
-        <div style={{ display: "flex", justifyContent: "space-between", padding: "15px" }}>
-          <div>{filePath}</div>
+        <div className="ribbon">
+          <div>{this.state.filePath}</div>
           <div><button onClick={this.startPiplSearch}>Start Pipl Search</button></div>
         </div>
         <ReactDataGrid
           columns={this.state.columns}
           minHeight={window.visualViewport.height}
-          rowGetter={i => rows[i]}
-          rowsCount={rows.length}
-          // rowSelection={{
-          //   enableShiftSelect: false,
-          //   onRowsSelected: this.onRowsSelected,
-          //   onRowsDeselected: this.onRowsDeselected,
-          //   selectBy: {
-          //     indexes: this.state.selectedIndexes
-          //   }
-          // }}
-          onGridRowsUpdated={this.onGridRowsUpdated}
-          enableCellSelect={true}
+          rowGetter={i => this.state.rows[i]}
+          rowsCount={this.state.rows.length}
+          enableCellSelect={false}
         />
       </div>
     );

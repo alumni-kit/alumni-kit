@@ -17,7 +17,3 @@ code {
     monospace;
 }
 
-.react-grid-Grid {
-  font-size: 12px;
-	min-height: calc(100vh) !important;
-}
