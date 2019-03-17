@@ -1,3 +1,20 @@
-.App {
-  text-align: center;
+.app {
+  position: relative;
+}
+
+.ribbon {
+  background-color: white;
+  display: flex;
+  justify-content: space-between;
+  padding: 15px;
+  position: fixed;
+  top: 0px;
+  width: 100%;
+  z-index: 1;
+}
+
+.react-grid-Grid {
+  font-size: 12px;
+  margin-top: 53px;
+	min-height: calc(100vh - 53px) !important;
 }
