@@ -143,19 +143,19 @@ class App extends Component {
           updatePiplApiKey={this.updatePiplApiKey}
         />
         {rows.length > 0 ? (
-          <>
-            <Segment id="ribbon">
-              <Header id="ribbon__filename">{filePath}</Header>
-              <div><Button primary onClick={this.startPiplSearch}>Start Pipl Search</Button></div>
-            </Segment>
-            <ReactDataGrid
-              columns={this.state.columns}
-              minHeight={window.visualViewport.height - 64}
-              rowGetter={i => this.state.rows[i]}
-              rowsCount={this.state.rows.length}
-              enableCellSelect={false}
-            />
-          </>
+          <ReactDataGrid
+            columns={this.state.columns}
+            minHeight={window.visualViewport.height}
+            rowGetter={i => this.state.rows[i]}
+            rowsCount={this.state.rows.length}
+            enableCellSelect={false}
+            toolbar={(
+              <Segment id="ribbon">
+                <Header id="ribbon__filename">{filePath}</Header>
+                <div><Button primary onClick={this.startPiplSearch}>Start Pipl Search</Button></div>
+              </Segment>
+            )}
+          />
         )
         : (
           <Dropzone App={this} />
