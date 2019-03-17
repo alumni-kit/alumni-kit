@@ -1,8 +1,20 @@
 import React from "react";
 import { Button, Input, Modal } from "semantic-ui-react";
 
-const ApiKeyModal = ({ openApiKeyModal, piplApiKey, updatePiplApiKey, savePiplApiKey }) => (
-  <Modal id="api-key-modal" closeIcon open={openApiKeyModal} size="tiny">
+const ApiKeyModal = ({
+  closeApiKeyModal,
+  openApiKeyModal,
+  piplApiKey,
+  updatePiplApiKey,
+  savePiplApiKey
+}) => (
+  <Modal
+    id="api-key-modal"
+    closeIcon
+    onClose={closeApiKeyModal}
+    open={openApiKeyModal}
+    size="tiny"
+  >
     <Modal.Header>ENTER YOUR API KEY</Modal.Header>
     <Modal.Content className="api-key-modal__content">
       <Input

@@ -164,11 +164,15 @@ class App extends Component {
 
     const PIPL_API_KEY = window.process.env.PIPL_API_KEY;
 
-    // if (PIPL_API_KEY !== "" || typeof PIPL_API_KEY === undefined) {
+    if (PIPL_API_KEY === "" || typeof PIPL_API_KEY === undefined) {
       this.openApiKeyModal(PIPL_API_KEY);
-    // }
+    }
 
     generateMenu(this);
+  }
+
+  closeApiKeyModal = () => {
+    this.setState({ openApiKeyModal: false });
   }
 
   openApiKeyModal = (piplApiKey) => {
@@ -263,6 +267,7 @@ class App extends Component {
         throw err;
       }
       window.process.env.PIPL_API_KEY = piplApiKey;
+      this.closeApiKeyModal();
     });
   }
 
@@ -277,6 +282,7 @@ class App extends Component {
     return (
       <div>
         <ApiKeyModal
+          closeApiKeyModal={this.closeApiKeyModal}
           openApiKeyModal={openApiKeyModal}
           piplApiKey={piplApiKey}
           savePiplApiKey={this.savePiplApiKey}
