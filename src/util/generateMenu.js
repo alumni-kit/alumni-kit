@@ -22,13 +22,29 @@ const generateMenu = (reactAppContext) => {
                 csvtojson()
                   .fromFile(filePath)
                   .on('header', (headers) => {
-                    const columns = headers.map((header) => {
+                    const requiredFields = {
+                      "Status": "Status",
+                      "First Name": "First Name",
+                      "Last Name": "Last Name",
+                      "Email1": "Email1",
+                      "Email2": "Email2",
+                      "Phone1": "Phone1",
+                      "Phone2": "Phone2",
+                      "Mailing Address": "Mailing Address",
+                      "Education": "Education",
+                      "Job": "Job"
+                    }
+                    const mergedHeaders = Object.assign(requiredFields, ...headers.map(header => ({[header]: header})));
+                    const mergedHeadersArray = Object.keys(mergedHeaders);
+
+                    const columns = mergedHeadersArray.map((header) => {
                       return {
                         editable: false,
                         key: header,
                         name: header,
                       };
                     });
+
                     reactAppContext.setState({ columns });
                   })
                   .then((rowsFromCSV)=>{

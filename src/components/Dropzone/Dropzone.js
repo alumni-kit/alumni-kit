@@ -16,14 +16,30 @@ const Dropzone = props => {
             csvtojson()
                 .fromString(csvString)
                 .on('header', (headers) => {
-                    const columns = headers.map((header) => {
+                    const requiredFields = {
+                        "Status": "Status",
+                        "First Name": "First Name",
+                        "Last Name": "Last Name",
+                        "Email1": "Email1",
+                        "Email2": "Email2",
+                        "Phone1": "Phone1",
+                        "Phone2": "Phone2",
+                        "Mailing Address": "Mailing Address",
+                        "Education": "Education",
+                        "Job": "Job"
+                      }
+                      const mergedHeaders = Object.assign(requiredFields, ...headers.map(header => ({[header]: header})));
+                      const mergedHeadersArray = Object.keys(mergedHeaders);
+  
+                      const columns = mergedHeadersArray.map((header) => {
                         return {
-                        editable: false,
-                        key: header,
-                        name: header,
+                          editable: false,
+                          key: header,
+                          name: header,
                         };
-                    });
-                    App.setState({ columns });
+                      });
+  
+                      App.setState({ columns });
                 })
                 .then((rowsFromCSV)=>{
                     const rows = rowsFromCSV.map((row, index) => {
