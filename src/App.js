@@ -14,6 +14,7 @@ class App extends Component {
     columns: [],
     filePath: '',
     openApiKeyModal: false,
+    piplApiKey: window.process.env.PIPL_API_KEY,
     rows: [],
   }
   

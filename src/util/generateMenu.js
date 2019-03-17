@@ -79,17 +79,14 @@ const generateMenu = (reactAppContext) => {
         ]
       },
       {
-        label: 'Edit',
+        label: 'Preferences',
         submenu: [
-          { role: 'undo' },
-          { role: 'redo' },
-          { type: 'separator' },
-          { role: 'cut' },
-          { role: 'copy' },
-          { role: 'paste' },
-          { role: 'pasteandmatchstyle' },
-          { role: 'delete' },
-          { role: 'selectall' }
+          {
+            label: "Enter API Key",
+            click () {
+              reactAppContext.openApiKeyModal(reactAppContext.state.piplApiKey);
+            }
+          }
         ]
       },
       {
