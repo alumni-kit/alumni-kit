@@ -134,15 +134,15 @@ class App extends Component {
     const { filePath, openApiKeyModal, piplApiKey, rows } = this.state;
     return (
       <div className="app">
+        <ApiKeyModal
+          closeApiKeyModal={this.closeApiKeyModal}
+          openApiKeyModal={openApiKeyModal}
+          piplApiKey={piplApiKey}
+          savePiplApiKey={this.savePiplApiKey}
+          updatePiplApiKey={this.updatePiplApiKey}
+        />
         {rows.length > 0 ? (
           <>
-            <ApiKeyModal
-              closeApiKeyModal={this.closeApiKeyModal}
-              openApiKeyModal={openApiKeyModal}
-              piplApiKey={piplApiKey}
-              savePiplApiKey={this.savePiplApiKey}
-              updatePiplApiKey={this.updatePiplApiKey}
-            />
             <Segment id="ribbon">
               <Header id="ribbon__filename">{filePath}</Header>
               <div><Button primary onClick={this.startPiplSearch}>Start Pipl Search</Button></div>
