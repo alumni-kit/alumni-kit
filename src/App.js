@@ -5,6 +5,8 @@ import qs from "qs";
 import './App.css';
 import ApiKeyModal from "./components/ApiKeyModal/ApiKeyModal";
 
+const fs = window.require('fs');
+
 class App extends Component {
   state = {
     columns: [],
@@ -143,7 +145,7 @@ class App extends Component {
         </div>
         <ReactDataGrid
           columns={this.state.columns}
-          minHeight={window.visualViewport.height}
+          minHeight={window.visualViewport.height - 53}
           rowGetter={i => this.state.rows[i]}
           rowsCount={this.state.rows.length}
           enableCellSelect={false}
