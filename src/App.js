@@ -1,9 +1,11 @@
+import ApiKeyModal from "./components/ApiKeyModal/ApiKeyModal";
+import { Button, Header, Segment } from 'semantic-ui-react';
+import Dropzone from "./components/Dropzone/Dropzone";
 import generateMenu from './util/generateMenu';
 import React, { Component } from 'react';
 import ReactDataGrid from "react-data-grid";
 import qs from "qs";
 import './App.css';
-import ApiKeyModal from "./components/ApiKeyModal/ApiKeyModal";
 
 const fs = window.require('fs');
 
@@ -132,24 +134,31 @@ class App extends Component {
     const { filePath, openApiKeyModal, piplApiKey, rows } = this.state;
     return (
       <div className="app">
-        <ApiKeyModal
-          closeApiKeyModal={this.closeApiKeyModal}
-          openApiKeyModal={openApiKeyModal}
-          piplApiKey={piplApiKey}
-          savePiplApiKey={this.savePiplApiKey}
-          updatePiplApiKey={this.updatePiplApiKey}
-        />
-        <div className="ribbon">
-          <div>{this.state.filePath}</div>
-          <div><button onClick={this.startPiplSearch}>Start Pipl Search</button></div>
-        </div>
-        <ReactDataGrid
-          columns={this.state.columns}
-          minHeight={window.visualViewport.height - 53}
-          rowGetter={i => this.state.rows[i]}
-          rowsCount={this.state.rows.length}
-          enableCellSelect={false}
-        />
+        {rows.length > 0 ? (
+          <>
+            <ApiKeyModal
+              closeApiKeyModal={this.closeApiKeyModal}
+              openApiKeyModal={openApiKeyModal}
+              piplApiKey={piplApiKey}
+              savePiplApiKey={this.savePiplApiKey}
+              updatePiplApiKey={this.updatePiplApiKey}
+            />
+            <Segment id="ribbon">
+              <Header id="ribbon__filename">{filePath}</Header>
+              <div><Button primary onClick={this.startPiplSearch}>Start Pipl Search</Button></div>
+            </Segment>
+            <ReactDataGrid
+              columns={this.state.columns}
+              minHeight={window.visualViewport.height - 64}
+              rowGetter={i => this.state.rows[i]}
+              rowsCount={this.state.rows.length}
+              enableCellSelect={false}
+            />
+          </>
+        )
+        : (
+          <Dropzone App={this} />
+        )}
       </div>
     );
   }

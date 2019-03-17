@@ -1,4 +1,5 @@
 .app {
+  height: 100%;
   position: relative;
 }
 
@@ -14,19 +15,33 @@
   width: 80%;
 }
 
-.ribbon {
-  background-color: white;
+#ribbon {
+  align-items: center;
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
   display: flex;
   justify-content: space-between;
-  padding: 15px;
   position: fixed;
   top: 0px;
   width: 100%;
   z-index: 1;
 }
 
+#ribbon__filename {
+  margin-bottom: 0px;
+}
+
 .react-grid-Grid {
   font-size: 12px;
-  margin-top: 53px;
-	min-height: calc(100vh - 53px) !important;
+  margin-top: 64px;
+	min-height: calc(100vh - 64px) !important;
+}
+
+#dropzone {
+  height: 100%;
+  padding: 10px;
+}
+
+#dropzone__segment {
+  height: 100%;
 }
