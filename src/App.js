@@ -19,10 +19,6 @@ class App extends Component {
   }
   
   componentDidMount() {
-    setTimeout(() => {
-      window.dispatchEvent(new Event('resize'));
-    }, 0);
-
     const PIPL_API_KEY = window.process.env.PIPL_API_KEY;
 
     if (PIPL_API_KEY === "" || typeof PIPL_API_KEY === undefined) {
@@ -92,7 +88,10 @@ class App extends Component {
     });
 
     Promise.all(updatedRows)
-      .then(rows => this.setState({ rows }));
+      .then(rows => {
+        this.setState({ rows });
+        window.dispatchEvent(new Event('resize'));
+      });
   }
 
   getNewRow = async () => {
