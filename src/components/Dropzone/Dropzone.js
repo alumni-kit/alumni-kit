@@ -46,7 +46,6 @@ const Dropzone = props => {
     return (
     <div id="dropzone">
         <Segment id="dropzone__segment" placeholder {...getRootProps()}>
-            <input {...getInputProps()} />
             <Header icon>
                 <Icon name='table' />
                 {
@@ -57,6 +56,7 @@ const Dropzone = props => {
             </Header>
             
             <Button primary>Add .csv</Button>
+            <input {...getInputProps()} />
         </Segment>
     </div>
   )
