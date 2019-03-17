@@ -3,16 +3,36 @@ import React, { Component } from 'react';
 import ReactDataGrid from "react-data-grid";
 import qs from "qs";
 import './App.css';
+import ApiKeyModal from "./components/ApiKeyModal/ApiKeyModal";
 
 class App extends Component {
-  state = { columns: [], filePath: '', rows: [] }
+  state = {
+    columns: [],
+    filePath: '',
+    openApiKeyModal: false,
+    rows: [],
+  }
   
   componentDidMount() {
     setTimeout(() => {
       window.dispatchEvent(new Event('resize'));
     }, 0);
 
+    const PIPL_API_KEY = window.process.env.PIPL_API_KEY;
+
+    if (PIPL_API_KEY === "" || typeof PIPL_API_KEY === undefined) {
+      this.openApiKeyModal(PIPL_API_KEY);
+    }
+
     generateMenu(this);
+  }
+
+  closeApiKeyModal = () => {
+    this.setState({ openApiKeyModal: false });
+  }
+
+  openApiKeyModal = (piplApiKey) => {
+    this.setState({ openApiKeyModal: true, piplApiKey });
   }
 
   startPiplSearch = async e => {
@@ -88,9 +108,35 @@ class App extends Component {
       });
   }
 
+  savePiplApiKey = () => {
+    const { piplApiKey } = this.state;
+
+    fs.writeFile('.env', `PIPL_API_KEY=${piplApiKey}`, (err) => {
+      if (err) {
+        throw err;
+      }
+      window.process.env.PIPL_API_KEY = piplApiKey;
+      this.closeApiKeyModal();
+    });
+  }
+
+  updatePiplApiKey = e => {
+    const piplApiKey = e.target.value;
+
+    this.setState({ piplApiKey });
+  }
+
   render() {
+    const { filePath, openApiKeyModal, piplApiKey, rows } = this.state;
     return (
       <div className="app">
+        <ApiKeyModal
+          closeApiKeyModal={this.closeApiKeyModal}
+          openApiKeyModal={openApiKeyModal}
+          piplApiKey={piplApiKey}
+          savePiplApiKey={this.savePiplApiKey}
+          updatePiplApiKey={this.updatePiplApiKey}
+        />
         <div className="ribbon">
           <div>{this.state.filePath}</div>
           <div><button onClick={this.startPiplSearch}>Start Pipl Search</button></div>
