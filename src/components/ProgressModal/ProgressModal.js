@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Button, Modal, Progress } from "semantic-ui-react";
+import { Button, Container, Modal, Progress } from "semantic-ui-react";
 import qs from "qs";
 
 class ProgressModal extends Component {
@@ -9,6 +9,7 @@ class ProgressModal extends Component {
         this.state = {
             open: false,
             completedSearches: 0,
+            status: "Searching...",
             totalSearches: 1,
         }
     }
@@ -81,6 +82,7 @@ class ProgressModal extends Component {
         Promise.all(updatedRows)
             .then(rows => {
                 App.setState({ rows });
+                this.setState({ status: "Complete" })
                 window.dispatchEvent(new Event('resize'));
             });
     }
@@ -160,7 +162,9 @@ class ProgressModal extends Component {
             >
             <Modal.Header>PROGRESS</Modal.Header>
             <Modal.Content className="progress-modal__content">
+                <Container textAlign="center">{this.state.status}</Container>
                 <Progress percent={Math.round(completedSearches / totalSearches * 100)} active color="blue" success={success} />
+                <Container textAlign="right">{completedSearches} / {totalSearches} searches</Container>
             </Modal.Content>
             <Modal.Actions>
                 <Button>Pause</Button>

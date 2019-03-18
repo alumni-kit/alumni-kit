@@ -1,4 +1,4 @@
-import { Button, Header, Icon, Modal, Popup } from "semantic-ui-react";
+import { Button, Icon, Modal, Popup } from "semantic-ui-react";
 import React, { Component } from 'react';
 
 class ConfirmModal extends Component {
@@ -40,7 +40,7 @@ class ConfirmModal extends Component {
                 >
                     <Modal.Header>Confirm</Modal.Header>
                     <Modal.Content className="confirm-modal__content">
-                        <Header as="h4">{App.state.rows.length} searches</Header>
+                        <p>{App.state.rows.length} searches</p>
                         <b>Estimated Cost: ${this.calculateEstimatedCost()} <Popup trigger={<Icon name="info circle" />} content={`${App.state.rows.length} searches x $0.80/search ~= $${this.calculateEstimatedCost()}`} /></b>
                     </Modal.Content>
                     <Modal.Actions>
