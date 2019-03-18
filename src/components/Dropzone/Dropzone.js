@@ -33,11 +33,18 @@ const Dropzone = props => {
                       const mergedHeadersArray = Object.keys(mergedHeaders);
   
                       const columns = mergedHeadersArray.map((header) => {
-                        return {
+                        let column = {
                           editable: false,
                           key: header,
                           name: header,
                         };
+
+                        // Set the width of the id column
+                        if (header === "id") {
+                            column = Object.assign(column, { width: 50 });
+                        }
+
+                        return column;
                       });
   
                       App.setState({ columns });
