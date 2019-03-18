@@ -100,7 +100,7 @@ class App extends Component {
   getNewRow = async () => {
     return await fetch('/temp/person.json')
       .then(response => response.json())
-      .then(json => {
+      .then(async json => {
         const possiblePerson = json.possible_persons[0];
         const row = {
           "First Name": possiblePerson.names[0].first,
@@ -110,10 +110,32 @@ class App extends Component {
           "Phone1": possiblePerson.phones[0] ? possiblePerson.phones[0].display : "",
           "Phone2": possiblePerson.phones[1] ? possiblePerson.phones[1].display : "",
           "Mailing Address": possiblePerson.addresses[0] ? possiblePerson.addresses[0].display : "",
+          "Education": possiblePerson.educations[0] ? possiblePerson.educations[0].display : "",
+          "Job": possiblePerson.jobs[0] ? possiblePerson.jobs[0].display : ""
         }
-        return row;
+
+        if (!possiblePerson.emails) {
+          const emailObject = await this.getEmailFromSearchPointer(row);
+          return Object.assign(row, emailObject);
+        } else {
+          return row;
+        }
       });
   }
+
+  getEmailFromSearchPointer = async (row) => {
+    return await fetch('/temp/search_pointer_response.json')
+      .then(response => response.json())
+      .then(json => {
+        const possiblePerson = json.person;
+        const emailObject = {
+          "Email1": (possiblePerson.emails || [])[0] ? possiblePerson.emails[0].address : "",
+          "Email2": (possiblePerson.emails || [])[1] ? possiblePerson.emails[1].address : "",
+        };
+
+        return emailObject;
+      });
+  };
 
   savePiplApiKey = () => {
     const { piplApiKey } = this.state;
