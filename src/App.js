@@ -86,6 +86,7 @@ class App extends Component {
     const {
       filePath,
       openApiKeyModal,
+      openCompletionModal,
       openConfirmModal,
       openProgressModal,
       piplApiKey,
