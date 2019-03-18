@@ -1,4 +1,4 @@
-import { Button, Modal } from "semantic-ui-react";
+import { Button, Header, Icon, Modal, Popup } from "semantic-ui-react";
 import React, { Component } from 'react';
 
 class ConfirmModal extends Component {
@@ -11,6 +11,16 @@ class ConfirmModal extends Component {
 
     componentWillReceiveProps(props) {
         this.setState({ open: props.openConfirmModal });
+    }
+
+    calculateEstimatedCost = () => {
+        const { App } = this.props;
+
+        const numberOfSearches = App.state.rows.length;
+        const chargePerSearch = 0.80;
+        const estimatedCost = Math.round(numberOfSearches * chargePerSearch).toFixed(2);
+
+        return estimatedCost;
     }
 
     close = () => this.props.App.setState({ openConfirmModal: false });
@@ -30,8 +40,8 @@ class ConfirmModal extends Component {
                 >
                     <Modal.Header>Confirm</Modal.Header>
                     <Modal.Content className="confirm-modal__content">
-                        <p>{App.state.rows.length} searches</p>
-                        <p>Estimated Cost: $166.00</p>
+                        <Header as="h4">{App.state.rows.length} searches</Header>
+                        <b>Estimated Cost: ${this.calculateEstimatedCost()} <Popup trigger={<Icon name="info circle" />} content={`${App.state.rows.length} searches x $0.80/search ~= $${this.calculateEstimatedCost()}`} /></b>
                     </Modal.Content>
                     <Modal.Actions>
                         <Button onClick={this.openProgressModal}>Start Pipl Search</Button>
