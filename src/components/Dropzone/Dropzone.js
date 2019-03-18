@@ -68,8 +68,8 @@ const Dropzone = props => {
     });
 
     return (
-    <div id="dropzone">
-        <Segment id="dropzone__segment" placeholder {...getRootProps()}>
+    <div id="dropzone" {...getRootProps()}>
+        <Segment id="dropzone__segment" placeholder>
             <Header icon>
                 <Icon name='table' />
                 {
@@ -78,7 +78,6 @@ const Dropzone = props => {
                     "Drag and drop a .csv file here"
                 }
             </Header>
-            
             <Button primary>Add .csv</Button>
             <input {...getInputProps()} />
         </Segment>

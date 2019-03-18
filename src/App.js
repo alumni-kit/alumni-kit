@@ -1,11 +1,13 @@
-import React, { Component } from "react";
+import ApiKeyModal from "./components/ApiKeyModal/ApiKeyModal";
+import { Button, Header, Segment } from 'semantic-ui-react';
+import Dropzone from "./components/Dropzone/Dropzone";
+import generateMenu from './util/generateMenu';
+import ConfirmModal from './components/ConfirmModal/ConfirmModal';
+import ProgressModal from './components/ProgressModal/ProgressModal';
+import React, { Component } from 'react';
 import ReactDataGrid from "react-data-grid";
 import { ToastContainer, toast } from "react-toastify";
-import { Button, Header, Segment } from "semantic-ui-react";
 import qs from "qs";
-import generateMenu from "./util/generateMenu";
-import Dropzone from "./components/Dropzone/Dropzone";
-import ApiKeyModal from "./components/ApiKeyModal/ApiKeyModal";
 import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
 
@@ -16,6 +18,8 @@ class App extends Component {
     columns: [],
     filePath: '',
     openApiKeyModal: false,
+    openConfirmModal: false,
+    openProgressModal: false,
     piplApiKey: window.process.env.PIPL_API_KEY,
     rows: [],
     validPiplApiKey: true,
@@ -198,11 +202,12 @@ class App extends Component {
     const {
       filePath,
       openApiKeyModal,
+      openConfirmModal,
+      openProgressModal,
       piplApiKey,
       rows,
       validPiplApiKey
     } = this.state;
-
     return (
       <div className="app">
         <ToastContainer />
@@ -224,7 +229,7 @@ class App extends Component {
             toolbar={(
               <Segment id="ribbon">
                 <Header id="ribbon__filename">{filePath}</Header>
-                <div><Button primary onClick={this.startPiplSearch}>Start Pipl Search</Button></div>
+                <Button primary onClick={() => this.setState({ openConfirmModal: true })}>Start Pipl Search</Button>
               </Segment>
             )}
           />
@@ -232,6 +237,8 @@ class App extends Component {
         : (
           <Dropzone App={this} />
         )}
+        <ConfirmModal App={this} openConfirmModal={openConfirmModal} />
+        <ProgressModal App={this} openProgressModal={openProgressModal} />
       </div>
     );
   }
