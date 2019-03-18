@@ -16,6 +16,7 @@ class App extends Component {
     openApiKeyModal: false,
     piplApiKey: window.process.env.PIPL_API_KEY,
     rows: [],
+    validPiplApiKey: true,
   }
   
   componentDidMount() {
@@ -29,7 +30,7 @@ class App extends Component {
   }
 
   closeApiKeyModal = () => {
-    this.setState({ openApiKeyModal: false });
+    this.setState({ openApiKeyModal: false, validPiplApiKey: true });
   }
 
   openApiKeyModal = (piplApiKey) => {
@@ -126,19 +127,42 @@ class App extends Component {
 
   updatePiplApiKey = e => {
     const piplApiKey = e.target.value;
+    let validPiplApiKey = false;
 
-    this.setState({ piplApiKey });
+    if (piplApiKey) {
+      validPiplApiKey = true;
+    }
+
+    this.setState({ piplApiKey, validPiplApiKey });
+  }
+
+  validatePiplApiKey = () => {
+    const { piplApiKey } = this.state;
+
+    if (piplApiKey) {
+      this.savePiplApiKey();
+    } else {
+      this.setState({ validPiplApiKey: false });
+    }
   }
 
   render() {
-    const { filePath, openApiKeyModal, piplApiKey, rows } = this.state;
+    const {
+      filePath,
+      openApiKeyModal,
+      piplApiKey,
+      rows,
+      validPiplApiKey
+    } = this.state;
+
     return (
       <div className="app">
         <ApiKeyModal
           closeApiKeyModal={this.closeApiKeyModal}
           openApiKeyModal={openApiKeyModal}
           piplApiKey={piplApiKey}
-          savePiplApiKey={this.savePiplApiKey}
+          validatePiplApiKey={this.validatePiplApiKey}
+          validPiplApiKey={validPiplApiKey}
           updatePiplApiKey={this.updatePiplApiKey}
         />
         {rows.length > 0 ? (
