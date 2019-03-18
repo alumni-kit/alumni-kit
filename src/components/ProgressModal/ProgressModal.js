@@ -80,11 +80,14 @@ class ProgressModal extends Component {
         });
 
         Promise.all(updatedRows)
-            .then(rows => {
-                App.setState({ rows });
-                this.setState({ status: "Complete" })
-                window.dispatchEvent(new Event('resize'));
-            });
+        .then(rows => {
+            this.setState({ status: "Complete" });
+            window.dispatchEvent(new Event('resize'));
+
+            setTimeout(() => {
+                App.setState({ rows, openProgressModal: false, openCompletionModal: true });
+            }, 1000);
+        });
     }
     
     getNewRow = async () => {

@@ -2,6 +2,7 @@ import ApiKeyModal from "./components/ApiKeyModal/ApiKeyModal";
 import { Button, Header, Segment } from 'semantic-ui-react';
 import Dropzone from "./components/Dropzone/Dropzone";
 import generateMenu from './util/generateMenu';
+import CompletionModal from './components/CompletionModal/CompletionModal';
 import ConfirmModal from './components/ConfirmModal/ConfirmModal';
 import ProgressModal from './components/ProgressModal/ProgressModal';
 import React, { Component } from 'react';
@@ -18,6 +19,7 @@ class App extends Component {
     filePath: '',
     openApiKeyModal: false,
     openConfirmModal: false,
+    openCompletionModal: false,
     openProgressModal: false,
     piplApiKey: window.process.env.PIPL_API_KEY,
     rows: [],
@@ -121,6 +123,7 @@ class App extends Component {
         )}
         <ConfirmModal App={this} openConfirmModal={openConfirmModal} />
         <ProgressModal App={this} openProgressModal={openProgressModal} />
+        <CompletionModal App={this} openCompletionModal={openCompletionModal} />
       </div>
     );
   }
