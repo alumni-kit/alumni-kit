@@ -134,7 +134,7 @@ class ProgressModal extends Component {
     };
 
     determineStatus = (row) => {
-        let status = "Filled all fields";
+        let status = "Complete";
         let missingColumns = [];
         for (let column in row) {
             if (!row[column]) {
@@ -143,7 +143,7 @@ class ProgressModal extends Component {
         }
 
         if (missingColumns.length) {
-            status = "Unable to fill all fields";
+            status = "Partial";
         }
 
         return status;

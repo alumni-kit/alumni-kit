@@ -1,6 +1,7 @@
 import React, {useCallback} from 'react';
 import {useDropzone} from 'react-dropzone';
 import { Button, Header, Icon, Segment } from 'semantic-ui-react';
+import StatusFormatter from './../../util/statusFormatter';
 
 const csvtojson = window.require("csvtojson");
 
@@ -42,6 +43,10 @@ const Dropzone = props => {
                         // Set the width of the id column
                         if (header === "id") {
                             column = Object.assign(column, { width: 50 });
+                        }
+
+                        if (header === "Status") {
+                            column = Object.assign(column, { formatter: StatusFormatter, width: 128 });
                         }
 
                         return column;

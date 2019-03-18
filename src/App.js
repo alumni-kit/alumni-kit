@@ -106,7 +106,9 @@ class App extends Component {
         {rows.length > 0 ? (
           <ReactDataGrid
             columns={this.state.columns}
+            headerRowHeight={35}
             minHeight={window.visualViewport.height}
+            rowHeight={70}
             rowGetter={i => this.state.rows[i]}
             rowsCount={this.state.rows.length}
             enableCellSelect={false}

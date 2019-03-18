@@ -1,3 +1,5 @@
+import StatusFormatter from './statusFormatter';
+
 const electron = window.require('electron');
 const { remote } = electron;
 const { dialog, Menu } = remote;
@@ -48,6 +50,10 @@ const generateMenu = (reactAppContext) => {
                       // Set the width of the id column
                       if (header === "id") {
                           column = Object.assign(column, { width: 50 });
+                      }
+
+                      if (header === "Status") {
+                        column = Object.assign(column, { formatter: StatusFormatter, width: 128 });
                       }
 
                       return column;
