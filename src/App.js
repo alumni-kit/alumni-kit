@@ -115,7 +115,7 @@ class App extends Component {
             toolbar={(
               <Segment id="ribbon">
                 <Header id="ribbon__filename">{filePath}</Header>
-                <Button primary onClick={() => this.setState({ openConfirmModal: true })}>Start Pipl Search</Button>
+                <Button id="ribbon__start-pipl-search" primary onClick={() => this.setState({ openConfirmModal: true })}>Start Pipl Search</Button>
               </Segment>
             )}
           />

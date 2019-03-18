@@ -35,6 +35,13 @@
 
 #ribbon__filename {
   margin-bottom: 0px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#ribbon__start-pipl-search {
+  flex-shrink: 0;
 }
 
 .react-grid-Grid {
