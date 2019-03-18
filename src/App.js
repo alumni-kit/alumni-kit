@@ -116,9 +116,12 @@ class App extends Component {
 
         if (!possiblePerson.emails) {
           const emailObject = await this.getEmailFromSearchPointer(row);
-          return Object.assign(row, emailObject);
+          const combinedResult = Object.assign(row, emailObject);
+          const status = this.determineStatus(combinedResult);
+          return Object.assign(combinedResult, { "Status": status });
         } else {
-          return row;
+          const status = this.determineStatus(row);
+          return Object.assign(row, { "Status": status });
         }
       });
   }
@@ -136,6 +139,22 @@ class App extends Component {
         return emailObject;
       });
   };
+
+  determineStatus = (row) => {
+    let status = "Filled all fields";
+    let missingColumns = [];
+    for (let column in row) {
+      if (!row[column]) {
+        missingColumns.push(column);
+      }
+    }
+
+    if (missingColumns.length) {
+      status = "Unable to fill all fields";
+    }
+
+    return status;
+  }
 
   savePiplApiKey = () => {
     const { piplApiKey } = this.state;
