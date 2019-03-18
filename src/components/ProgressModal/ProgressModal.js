@@ -152,8 +152,6 @@ class ProgressModal extends Component {
             success = true;
         }
 
-        console.log({ success, completedSearches, totalSearches });
-
         return (
             <Modal
                 id="progress-modal"
@@ -162,7 +160,7 @@ class ProgressModal extends Component {
             >
             <Modal.Header>PROGRESS</Modal.Header>
             <Modal.Content className="progress-modal__content">
-                <Progress value={completedSearches} total={totalSearches} active color="blue" success={success} />
+                <Progress percent={Math.round(completedSearches / totalSearches * 100)} active color="blue" success={success} />
             </Modal.Content>
             <Modal.Actions>
                 <Button>Pause</Button>
