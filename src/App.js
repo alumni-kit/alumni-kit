@@ -1,13 +1,15 @@
-import ApiKeyModal from "./components/ApiKeyModal/ApiKeyModal";
-import { Button, Header, Segment } from 'semantic-ui-react';
-import Dropzone from "./components/Dropzone/Dropzone";
-import generateMenu from './util/generateMenu';
-import React, { Component } from 'react';
+import React, { Component } from "react";
 import ReactDataGrid from "react-data-grid";
+import { ToastContainer, toast } from "react-toastify";
+import { Button, Header, Segment } from "semantic-ui-react";
 import qs from "qs";
-import './App.css';
+import generateMenu from "./util/generateMenu";
+import Dropzone from "./components/Dropzone/Dropzone";
+import ApiKeyModal from "./components/ApiKeyModal/ApiKeyModal";
+import "react-toastify/dist/ReactToastify.css";
+import "./App.css";
 
-const fs = window.require('fs');
+const fs = window.require("fs");
 
 class App extends Component {
   state = {
@@ -116,13 +118,18 @@ class App extends Component {
   savePiplApiKey = () => {
     const { piplApiKey } = this.state;
 
-    fs.writeFile('.env', `PIPL_API_KEY=${piplApiKey}`, (err) => {
+    fs.writeFile(".env", `PIPL_API_KEY=${piplApiKey}`, (err) => {
       if (err) {
         throw err;
       }
       window.process.env.PIPL_API_KEY = piplApiKey;
       this.closeApiKeyModal();
+      this.showToast("success", "Pipl API key is updated.");
     });
+  }
+
+  showToast = (type, message) => {
+    toast[type](message);
   }
 
   updatePiplApiKey = e => {
@@ -157,6 +164,7 @@ class App extends Component {
 
     return (
       <div className="app">
+        <ToastContainer />
         <ApiKeyModal
           closeApiKeyModal={this.closeApiKeyModal}
           openApiKeyModal={openApiKeyModal}
