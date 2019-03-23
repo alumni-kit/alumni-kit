@@ -1,6 +1,9 @@
 import React, { Component } from "react";
 import { Button, Container, Modal, Progress } from "semantic-ui-react";
 import qs from "qs";
+import * as Promise from 'bluebird';
+
+const promiseSerial = window.require('promise-serial');
 
 class ProgressModal extends Component {
     constructor(props) {
@@ -11,6 +14,7 @@ class ProgressModal extends Component {
             completedSearches: 0,
             status: "Searching...",
             totalSearches: 1,
+            pause: false,
         }
     }
 
@@ -37,99 +41,110 @@ class ProgressModal extends Component {
             "Mailing Address": "addresses"
         }
 
-        const updatedRows = await rows.map(async (row, index) => {
-            const person = {
-                names: [],
-                emails: [],
-                phones: []
-            }
-
-            const nameObject = {};
-
-            if (row["First Name"]) {
-                nameObject.first = row["First Name"];
-            }
-
-            if (row["Last Name"]) {
-                nameObject.last = row["Last Name"];
-            }
-
-            person.names.push(nameObject);
-
-            for (let key in row) {
-                if (key !== "First Name" && key !== "Last Name" && key !== "Mailing Address" && key !== "id") {
-                    if (row[key]) {
-                        const arrayProperty = propertyDictionary[key];
-                        person[arrayProperty].push(row[key]);
+        const updatedRows = await rows.map((row, index) => {
+            return async () => {
+                const person = {
+                    names: [],
+                    emails: [],
+                    phones: []
+                }
+    
+                const nameObject = {};
+    
+                if (row["First Name"]) {
+                    nameObject.first = row["First Name"];
+                }
+    
+                if (row["Last Name"]) {
+                    nameObject.last = row["Last Name"];
+                }
+    
+                person.names.push(nameObject);
+    
+                for (let key in row) {
+                    if (key !== "First Name" && key !== "Last Name" && key !== "Mailing Address" && key !== "id") {
+                        if (row[key]) {
+                            const arrayProperty = propertyDictionary[key];
+                            person[arrayProperty].push(row[key]);
+                        }
                     }
                 }
-            }
-
-            if (row["Mailing Address"]) {
-                person.addresses = [];
-                person.addresses.push({ raw: row["Mailing Address"] });
-            }
-
-            const requestObject = { person: JSON.stringify(person), key: window.process.env.PIPL_API_KEY };
-            const queryString = qs.stringify(requestObject);
-            const newRow = await this.getNewRow(queryString);
-
-            this.setState({ completedSearches: index + 1 });
-
-            return Object.assign(row, newRow);
+    
+                if (row["Mailing Address"]) {
+                    person.addresses = [];
+                    person.addresses.push({ raw: row["Mailing Address"] });
+                }
+    
+                const requestObject = { person: JSON.stringify(person), key: window.process.env.PIPL_API_KEY };
+                const queryString = qs.stringify(requestObject);
+                const newRow = await this.getNewRow(queryString);
+    
+                this.setState({ completedSearches: index + 1 });
+    
+                return Object.assign(row, newRow);
+            };
         });
+ 
+        promiseSerial(updatedRows)
+            .then(rows => {
+                this.setState({ status: "Complete" });
+                window.dispatchEvent(new Event('resize'));
 
-        Promise.all(updatedRows)
-        .then(rows => {
-            this.setState({ status: "Complete" });
-            window.dispatchEvent(new Event('resize'));
-
-            setTimeout(() => {
-                App.setState({ rows, openProgressModal: false, openCompletionModal: true });
-            }, 1000);
+                setTimeout(() => {
+                    App.setState({ rows, openProgressModal: false, openCompletionModal: true });
+                }, 1000);
         });
     }
     
-    getNewRow = async () => {
-        return await fetch('/temp/person.json')
-            .then(response => response.json())
-            .then(async json => {
-                const possiblePerson = json.possible_persons[0];
-                const row = {
-                    "First Name": possiblePerson.names[0].first,
-                    "Last Name": possiblePerson.names[0].last,
-                    "Email1": (possiblePerson.emails || [])[0] ? possiblePerson.emails[0].address : "",
-                    "Email2": (possiblePerson.emails || [])[1] ? possiblePerson.emails[1].address : "",
-                    "Phone1": possiblePerson.phones[0] ? possiblePerson.phones[0].display : "",
-                    "Phone2": possiblePerson.phones[1] ? possiblePerson.phones[1].display : "",
-                    "Mailing Address": possiblePerson.addresses[0] ? possiblePerson.addresses[0].display : "",
-                    "Education": possiblePerson.educations[0] ? possiblePerson.educations[0].display : "",
-                    "Job": possiblePerson.jobs[0] ? possiblePerson.jobs[0].display : ""
-                }
+    getNewRow = async (queryString) => {        
+        return await Promise.delay(250).then(() =>  {
+            return fetch('/temp/person.json')
+                .then(response => response.json())
+                .then(async json => {
+                    const possiblePerson = json.possible_persons[0];
+                    const row = {
+                        "First Name": possiblePerson.names[0].first,
+                        "Last Name": possiblePerson.names[0].last,
+                        "Email1": (possiblePerson.emails || [])[0] ? possiblePerson.emails[0].address : "",
+                        "Email2": (possiblePerson.emails || [])[1] ? possiblePerson.emails[1].address : "",
+                        "Phone1": possiblePerson.phones[0] ? possiblePerson.phones[0].display : "",
+                        "Phone2": possiblePerson.phones[1] ? possiblePerson.phones[1].display : "",
+                        "Mailing Address": possiblePerson.addresses[0] ? possiblePerson.addresses[0].display : "",
+                        "Education": possiblePerson.educations[0] ? possiblePerson.educations[0].display : "",
+                        "Job": possiblePerson.jobs[0] ? possiblePerson.jobs[0].display : ""
+                    }
 
-                if (!possiblePerson.emails) {
-                    const emailObject = await this.getEmailFromSearchPointer(row);
-                    const combinedResult = Object.assign(row, emailObject);
-                    const status = this.determineStatus(combinedResult);
-                    return Object.assign(combinedResult, { "Status": status });
-                } else {
-                    const status = this.determineStatus(row);
-                    return Object.assign(row, { "Status": status });
-                }
+                    const queryObject = qs.parse(queryString);
+                    console.log("Finished first fetch with queryObject:", queryObject);
+
+                    if (!possiblePerson.emails) {
+                        const emailObject = await this.getEmailFromSearchPointer(row);
+                        const combinedResult = Object.assign(row, emailObject);
+                        const status = this.determineStatus(combinedResult);
+                        return Object.assign(combinedResult, { "Status": status });
+                    } else {
+                        const status = this.determineStatus(row);
+                        return Object.assign(row, { "Status": status });
+                    }
+                });
             });
     }
     
     getEmailFromSearchPointer = async (row) => {
-        return await fetch('/temp/search_pointer_response.json')
-            .then(response => response.json())
-            .then(json => {
-                const possiblePerson = json.person;
-                const emailObject = {
-                    "Email1": (possiblePerson.emails || [])[0] ? possiblePerson.emails[0].address : "",
-                    "Email2": (possiblePerson.emails || [])[1] ? possiblePerson.emails[1].address : "",
-            };
+        return await Promise.delay(250).then(() =>  {
+            return fetch('/temp/search_pointer_response.json')
+                .then(response => response.json())
+                .then(json => {
+                    const possiblePerson = json.person;
+                    const emailObject = {
+                        "Email1": (possiblePerson.emails || [])[0] ? possiblePerson.emails[0].address : "",
+                        "Email2": (possiblePerson.emails || [])[1] ? possiblePerson.emails[1].address : "",
+                };
 
-            return emailObject;
+                console.log("Finished second fetch with row:", row);
+
+                return emailObject;
+            });
         });
     };
 
@@ -166,7 +181,7 @@ class ProgressModal extends Component {
             <Modal.Header>PROGRESS</Modal.Header>
             <Modal.Content className="progress-modal__content">
                 <Container textAlign="center">{this.state.status}</Container>
-                <Progress percent={Math.round(completedSearches / totalSearches * 100)} active color="blue" success={success} />
+                <Progress percent={Math.round(completedSearches / totalSearches * 100)} active color="blue" success={success} progress="percent" />
                 <Container textAlign="right">{completedSearches} / {totalSearches} searches</Container>
             </Modal.Content>
             <Modal.Actions>

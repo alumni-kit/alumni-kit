@@ -18,8 +18,8 @@ const Dropzone = props => {
                 .fromString(csvString)
                 .on('header', (headers) => {
                     const requiredFields = {
-                        "id": "id",
                         "Status": "Status",
+                        "id": "id",
                         "First Name": "First Name",
                         "Last Name": "Last Name",
                         "Email1": "Email1",

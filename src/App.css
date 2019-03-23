@@ -24,8 +24,9 @@
 
 #ribbon {
   align-items: center;
-  border-top-left-radius: 0px;
-  border-top-right-radius: 0px;
+  border-radius: 0px;
+  border: none;
+  box-shadow: none;
   display: flex;
   justify-content: space-between;
   margin-bottom: 0px;
