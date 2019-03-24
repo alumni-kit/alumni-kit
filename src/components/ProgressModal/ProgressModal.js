@@ -15,6 +15,7 @@ class ProgressModal extends Component {
             status: "Searching...",
             totalSearches: 1,
             pause: false,
+            pauseIndex: 0,
         }
     }
 
@@ -42,46 +43,62 @@ class ProgressModal extends Component {
         }
 
         const updatedRows = await rows.map((row, index) => {
-            return async () => {
-                const person = {
-                    names: [],
-                    emails: [],
-                    phones: []
-                }
-    
-                const nameObject = {};
-    
-                if (row["First Name"]) {
-                    nameObject.first = row["First Name"];
-                }
-    
-                if (row["Last Name"]) {
-                    nameObject.last = row["Last Name"];
-                }
-    
-                person.names.push(nameObject);
-    
-                for (let key in row) {
-                    if (key !== "First Name" && key !== "Last Name" && key !== "Mailing Address" && key !== "id") {
-                        if (row[key]) {
-                            const arrayProperty = propertyDictionary[key];
-                            person[arrayProperty].push(row[key]);
+            return () => {
+                return new Promise(async (resolve, reject) => {
+                    console.log(index, this.state.pauseIndex);
+                    if (this.state.pause) {
+                        this.setState({ pauseIndex: index });
+                        console.log({ pauseIndex: index });
+                        reject(`Paused at index: ${index}`);
+                    } else if (index < this.state.pauseIndex) {
+                        return resolve('Skipping until we reach pause index');
+                    }
+                    
+                    if (this.state.pauseIndex && !this.state.pause) {
+                        // debugger;
+                    }
+
+                    const person = {
+                        names: [],
+                        emails: [],
+                        phones: []
+                    }
+        
+                    const nameObject = {};
+        
+                    if (row["First Name"]) {
+                        nameObject.first = row["First Name"];
+                    }
+        
+                    if (row["Last Name"]) {
+                        nameObject.last = row["Last Name"];
+                    }
+        
+                    person.names.push(nameObject);
+        
+                    for (let key in row) {
+                        if (key !== "First Name" && key !== "Last Name" && key !== "Mailing Address" && key !== "id" && key !== "Education" && key !== "Job" && key !== "Status") {
+                            if (row[key]) {
+                                const arrayProperty = propertyDictionary[key];
+                                person[arrayProperty].push(row[key]);
+                            }
                         }
                     }
-                }
-    
-                if (row["Mailing Address"]) {
-                    person.addresses = [];
-                    person.addresses.push({ raw: row["Mailing Address"] });
-                }
-    
-                const requestObject = { person: JSON.stringify(person), key: window.process.env.PIPL_API_KEY };
-                const queryString = qs.stringify(requestObject);
-                const newRow = await this.getNewRow(queryString);
-    
-                this.setState({ completedSearches: index + 1 });
-    
-                return Object.assign(row, newRow);
+        
+                    if (row["Mailing Address"]) {
+                        person.addresses = [];
+                        person.addresses.push({ raw: row["Mailing Address"] });
+                    }
+        
+                    const requestObject = { person: JSON.stringify(person), key: window.process.env.PIPL_API_KEY };
+                    const queryString = qs.stringify(requestObject);
+                    const newRow = await this.getNewRow(queryString);
+
+                    App.state.rows[index] = newRow;
+
+                    this.setState({ completedSearches: index + 1, rows: App.state.rows }, () => window.dispatchEvent(new Event('resize')));
+                    resolve(Object.assign(row, newRow));
+                });
             };
         });
  
@@ -91,9 +108,10 @@ class ProgressModal extends Component {
                 window.dispatchEvent(new Event('resize'));
 
                 setTimeout(() => {
-                    App.setState({ rows, openProgressModal: false, openCompletionModal: true });
+                    App.setState({ openProgressModal: false, openCompletionModal: true });
                 }, 1000);
-        });
+            })
+            .catch(err => console.warn(err));
     }
     
     getNewRow = async (queryString) => {        
@@ -164,6 +182,16 @@ class ProgressModal extends Component {
         return status;
     }
 
+    togglePauseResume = () => {
+        this.setState({
+            pause: !this.state.pause,
+        }, () => {
+            if (!this.state.pause) {
+                this.startPiplSearch();
+            }
+        });
+    }
+
     render() {
         const { completedSearches, totalSearches } = this.state;
         
@@ -185,7 +213,7 @@ class ProgressModal extends Component {
                 <Container textAlign="right">{completedSearches} / {totalSearches} searches</Container>
             </Modal.Content>
             <Modal.Actions>
-                <Button>Pause</Button>
+                <Button onClick={this.togglePauseResume}>{this.state.pause ? "Resume" : "Pause"}</Button>
                 <Button color="yellow" onClick={this.close}>Exit</Button>
             </Modal.Actions>
           </Modal>
