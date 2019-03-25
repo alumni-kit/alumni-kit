@@ -2,11 +2,21 @@ import StatusFormatter from './statusFormatter';
 
 const electron = window.require('electron');
 const { remote } = electron;
-const { dialog, Menu } = remote;
+const { BrowserWindow, dialog, Menu } = remote;
 
 const csvtojson = window.require("csvtojson");
 const jsontocsv = window.require('json2csv').Parser;
 const fs = window.require('fs');
+
+const writeToFile = function(filePath) {
+  const reactAppContext = this;
+  const { columns, rows } = reactAppContext.state;
+  const project = JSON.stringify({ columns, rows });
+
+  fs.writeFile(filePath, project, (err) => {
+    if (err) throw err;
+  })
+};
 
 const generateMenu = (reactAppContext) => {
     const template = [
@@ -14,7 +24,86 @@ const generateMenu = (reactAppContext) => {
         label: 'File',
         submenu: [
           {
-            label: "Open",
+            label: "New Project",
+            click () {
+              const mainWindow = new BrowserWindow({
+                minWidth: 400,
+                minHeight: 400,
+                width: 800,
+                height: 600,
+                webPreferences: {
+                  nodeIntegration: true
+                }
+              });
+
+              const startUrl = "http://localhost:5000";
+
+              // and load the index.html of the app.
+              mainWindow.loadURL(startUrl);
+
+              // Open the DevTools.
+              // mainWindow.webContents.openDevTools()
+
+              // Emitted when the window is closed.
+              mainWindow.on('closed', function () {
+                // Dereference the window object, usually you would store windows
+                // in an array if your app supports multi windows, this is the time
+                // when you should delete the corresponding element.
+                mainWindow = null;
+              });            }
+          },
+          {
+            label: "Open Project",
+            click () {
+              dialog.showOpenDialog({
+                filters: [{ name: 'JSON', extensions: ['json'] }],
+                properties: ['openFile']
+              }, (filePaths) => {
+                const filePath = filePaths[0];
+
+                fs.readFile(filePath, { encoding: "utf-8" }, (err, data) => {
+                  if (err) throw err;
+
+                  const { columns, rows } = JSON.parse(data);
+
+                  const formattedColumns = columns.map((column) => {
+                    if (column.name === "Status") {
+                      column = Object.assign(column, { formatter: StatusFormatter, width: 128 });
+                    }
+
+                    return column;
+                  });
+
+                  reactAppContext.setState({ columns: formattedColumns, rows, filePath });
+                })
+              });
+            }
+          },
+          {
+            label: "Save Project",
+            click () {
+              const { filePath } = reactAppContext.state;
+
+              if (!filePath) {
+                dialog.showSaveDialog({
+                  filters: [{ name: 'JSON', extensions: ['json'] }],
+                }, writeToFile.bind(reactAppContext));
+              } else {
+                writeToFile.apply(reactAppContext,filePath);
+              }
+            }
+          },
+          {
+            label: "Save Project As",
+            click () {
+              dialog.showSaveDialog({
+                filters: [{ name: 'JSON', extensions: ['json'] }],
+              }, writeToFile.bind(reactAppContext));
+            }
+          },
+          { type: "separator" },
+          {
+            label: "Import CSV",
             click () {
               dialog.showOpenDialog({
                 filters: [{ name: 'Comma Separated Values', extensions: ['csv'] }],
@@ -73,25 +162,7 @@ const generateMenu = (reactAppContext) => {
             }
           },
           {
-            label: "Save",
-            click () {
-              if (!reactAppContext.state.filePath) {
-                return;
-              }
-              const fields = reactAppContext.state.columns.map(column => column.name);
-              const filePath = reactAppContext.state.filePath;
-              const rows = reactAppContext.state.rows;
-  
-              const parser = new jsontocsv({ fields });
-              const csv = parser.parse(rows);
-              fs.writeFile(filePath, csv, (err) => {
-                if (err) throw err;
-                console.log('The file has been saved!');
-              });
-            }
-          },
-          {
-            label: "Save As",
+            label: "Export CSV",
             click () {
               dialog.showSaveDialog({
                 filters: [{ name: 'Comma Separated Values', extensions: ['csv'] }],
@@ -105,7 +176,9 @@ const generateMenu = (reactAppContext) => {
                 })
               });
             }
-          }
+          },
+          { type: "separator" },
+          { role: "quit" }
         ]
       },
       {
@@ -144,8 +217,8 @@ const generateMenu = (reactAppContext) => {
         role: 'help',
         submenu: [
           {
-            label: 'Learn More',
-            click () { electron.shell.openExternal('https://electronjs.org') }
+            label: 'Documentation',
+            click () { electron.shell.openExternal('https://github.com/alumni-kit/alumni-kit/wiki') }
           }
         ]
       }
