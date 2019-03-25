@@ -73,24 +73,6 @@ const generateMenu = (reactAppContext) => {
             }
           },
           {
-            label: "Save",
-            click () {
-              if (!reactAppContext.state.filePath) {
-                return;
-              }
-              const fields = reactAppContext.state.columns.map(column => column.name);
-              const filePath = reactAppContext.state.filePath;
-              const rows = reactAppContext.state.rows;
-  
-              const parser = new jsontocsv({ fields });
-              const csv = parser.parse(rows);
-              fs.writeFile(filePath, csv, (err) => {
-                if (err) throw err;
-                console.log('The file has been saved!');
-              });
-            }
-          },
-          {
             label: "Save As",
             click () {
               dialog.showSaveDialog({
@@ -144,8 +126,8 @@ const generateMenu = (reactAppContext) => {
         role: 'help',
         submenu: [
           {
-            label: 'Learn More',
-            click () { electron.shell.openExternal('https://electronjs.org') }
+            label: 'Documentation',
+            click () { electron.shell.openExternal('https://github.com/alumni-kit/alumni-kit/wiki') }
           }
         ]
       }
