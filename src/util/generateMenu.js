@@ -26,7 +26,7 @@ const generateMenu = (reactAppContext) => {
           {
             label: "New Project",
             click () {
-              const mainWindow = new BrowserWindow({
+              let mainWindow = new BrowserWindow({
                 minWidth: 400,
                 minHeight: 400,
                 width: 800,
