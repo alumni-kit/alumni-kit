@@ -10,8 +10,7 @@ const AppStub = {
 };
 
 beforeEach(() => {
-    // Clears the database and adds some testing data.
-    // Jest will wait for this promise to resolve before running tests.
+    // Clears the state before each test
     AppStub.setState({ columns: [] });
 });
 
