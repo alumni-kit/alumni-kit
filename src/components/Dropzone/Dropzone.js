@@ -1,8 +1,7 @@
 import React, {useCallback} from 'react';
 import {useDropzone} from 'react-dropzone';
 import { Button, Header, Icon, Segment } from 'semantic-ui-react';
-import StatusFormatter from 'util/statusFormatter';
-import csvtojson from 'csvtojson';
+import importCSV from 'util/importCSV';
 
 const Dropzone = props => {
     const { App } = props;
@@ -13,58 +12,12 @@ const Dropzone = props => {
         reader.onerror = () => console.log('file reading has failed')
         reader.onload = () => {
             const csvString = reader.result
-            csvtojson()
-                .fromString(csvString)
-                .on('header', (headers) => {
-                    const requiredFields = {
-                        "Status": "Status",
-                        "id": "id",
-                        "First Name": "First Name",
-                        "Last Name": "Last Name",
-                        "Email1": "Email1",
-                        "Email2": "Email2",
-                        "Phone1": "Phone1",
-                        "Phone2": "Phone2",
-                        "Mailing Address": "Mailing Address",
-                        "Education": "Education",
-                        "Job": "Job"
-                      }
-                      const mergedHeaders = Object.assign(requiredFields, ...headers.map(header => ({[header]: header})));
-                      const mergedHeadersArray = Object.keys(mergedHeaders);
-  
-                      const columns = mergedHeadersArray.map((header) => {
-                        let column = {
-                          editable: false,
-                          key: header,
-                          name: header,
-                        };
-
-                        // Set the width of the id column
-                        if (header === "id") {
-                            column = Object.assign(column, { width: 50 });
-                        }
-
-                        if (header === "Status") {
-                            column = Object.assign(column, { formatter: StatusFormatter, width: 128 });
-                        }
-
-                        return column;
-                      });
-  
-                      App.setState({ columns });
-                })
-                .then((rowsFromCSV)=>{
-                    const rows = rowsFromCSV.map((row, index) => {
-                        row.id = index;
-                        return row;
-                    });
-    
-                    App.setState({ filePath: acceptedFiles[0].path, rows });
-                });
+            importCSV({App, csvString, filePath: acceptedFiles[0].path});
         };
 
         reader.readAsText(acceptedFiles[0]);
     }, []);
+
     const {getRootProps, getInputProps, isDragActive} = useDropzone({
         accept: '.csv',
         multiple: false,
