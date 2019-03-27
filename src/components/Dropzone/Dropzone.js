@@ -1,7 +1,7 @@
 import React, {useCallback} from 'react';
 import {useDropzone} from 'react-dropzone';
 import { Button, Header, Icon, Segment } from 'semantic-ui-react';
-import importCSV from 'util/importCSV';
+import importCSV from 'util/importCSV/importCSV';
 
 const Dropzone = props => {
     const { App } = props;

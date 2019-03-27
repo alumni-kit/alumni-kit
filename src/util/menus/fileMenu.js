@@ -1,5 +1,5 @@
 import StatusFormatter from 'util/statusFormatter';
-import importCSV from 'util/importCSV';
+import importCSV from 'util/importCSV/importCSV';
 import writeToProjectFile from 'util/writeToProjectFile';
 import generateNewWindow from 'util/generateNewWindow';
 
