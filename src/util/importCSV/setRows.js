@@ -1,4 +1,4 @@
-const setRows = function(filePath, rowsFromCSV) {
+const setRows = function(filePath, rowsFromCSV = []) {
     const App = this;
 
     const rows = rowsFromCSV.map((row, index) => {

@@ -1,6 +1,6 @@
 import StatusFormatter from 'util/statusFormatter';
 
-const setHeaders = function(headers) {
+const setHeaders = function(headers = []) {
     const App = this;
     const requiredFields = {
         "Status": "Status",
