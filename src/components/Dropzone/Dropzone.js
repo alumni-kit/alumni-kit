@@ -2,8 +2,7 @@ import React, {useCallback} from 'react';
 import {useDropzone} from 'react-dropzone';
 import { Button, Header, Icon, Segment } from 'semantic-ui-react';
 import StatusFormatter from './../../util/statusFormatter';
-
-const csvtojson = window.require("csvtojson");
+import csvtojson from 'csvtojson';
 
 const Dropzone = props => {
     const { App } = props;

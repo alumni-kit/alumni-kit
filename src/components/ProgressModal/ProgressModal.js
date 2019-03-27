@@ -2,8 +2,7 @@ import React, { Component } from "react";
 import { Button, Container, Modal, Progress } from "semantic-ui-react";
 import qs from "qs";
 import * as Promise from 'bluebird';
-
-const promiseSerial = window.require('promise-serial');
+import promiseSerial from 'promise-serial';
 
 class ProgressModal extends Component {
     constructor(props) {
