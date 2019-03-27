@@ -113,12 +113,14 @@ class App extends Component {
             rowGetter={i => this.state.rows[i]}
             rowsCount={this.state.rows.length}
             enableCellSelect={false}
-            toolbar={(
-              <Segment id="ribbon">
-                <Header id="ribbon__filename">{filePath}</Header>
-                <Button id="ribbon__start-pipl-search" primary onClick={() => this.setState({ openConfirmModal: true })}>Start Pipl Search</Button>
-              </Segment>
-            )}
+            toolbar={() => {
+              return (
+                <Segment id="ribbon">
+                  <Header id="ribbon__filename">{filePath}</Header>
+                  <Button id="ribbon__start-pipl-search" primary onClick={() => this.setState({ openConfirmModal: true })}>Start Pipl Search</Button>
+                </Segment>
+              )
+            }}
           />
         )
         : (

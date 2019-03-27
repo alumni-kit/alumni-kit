@@ -26,6 +26,7 @@
   align-items: center;
   border-radius: 0px;
   border: none;
+  border-top: 1px solid #dddddd;
   box-shadow: none;
   display: flex;
   justify-content: space-between;
