@@ -138,10 +138,10 @@ class ProgressModal extends Component {
                         const emailObject = await this.getEmailFromSearchPointer(row);
                         const combinedResult = Object.assign(row, emailObject);
                         const status = this.determineStatus(combinedResult);
-                        return Object.assign(combinedResult, { "Status": status });
+                        return Object.assign(combinedResult, { "Status": status, "Response": json });
                     } else {
                         const status = this.determineStatus(row);
-                        return Object.assign(row, { "Status": status });
+                        return Object.assign(row, { "Status": status, "Response": json });
                     }
                 });
             });
