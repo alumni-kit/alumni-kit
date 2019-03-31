@@ -5,6 +5,7 @@ import generateMenu from './util/generateMenu';
 import CompletionModal from './components/CompletionModal/CompletionModal';
 import ConfirmModal from './components/ConfirmModal/ConfirmModal';
 import ProgressModal from './components/ProgressModal/ProgressModal';
+import ReviewModal from './components/ReviewModal/ReviewModal';
 import React, { Component } from 'react';
 import ReactDataGrid from "react-data-grid";
 import { ToastContainer, toast } from "react-toastify";
@@ -21,6 +22,7 @@ class App extends Component {
     openConfirmModal: false,
     openCompletionModal: false,
     openProgressModal: false,
+    openReviewModal: false,
     piplApiKey: window.process.env.PIPL_API_KEY,
     rows: [],
     validPiplApiKey: true,
@@ -89,6 +91,7 @@ class App extends Component {
       openCompletionModal,
       openConfirmModal,
       openProgressModal,
+      openReviewModal,
       piplApiKey,
       rows,
       validPiplApiKey
@@ -129,6 +132,7 @@ class App extends Component {
         <ConfirmModal App={this} openConfirmModal={openConfirmModal} />
         <ProgressModal App={this} openProgressModal={openProgressModal} />
         <CompletionModal App={this} openCompletionModal={openCompletionModal} />
+        <ReviewModal App={this} openReviewModal={openReviewModal} />
       </div>
     );
   }

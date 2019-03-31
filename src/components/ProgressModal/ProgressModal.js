@@ -113,7 +113,8 @@ class ProgressModal extends Component {
             .catch(err => console.warn(err));
     }
     
-    getNewRow = async (queryString) => {        
+    getNewRow = async (queryString) => {
+        const { App } = this.props;    
         return await Promise.delay(250).then(() =>  {
             return fetch('/temp/person.json')
                 .then(response => response.json())
@@ -138,10 +139,10 @@ class ProgressModal extends Component {
                         const emailObject = await this.getEmailFromSearchPointer(row);
                         const combinedResult = Object.assign(row, emailObject);
                         const status = this.determineStatus(combinedResult);
-                        return Object.assign(combinedResult, { "Status": status, "Response": json });
+                        return Object.assign(combinedResult, { "Status": { status, response: json, App } });
                     } else {
                         const status = this.determineStatus(row);
-                        return Object.assign(row, { "Status": status, "Response": json });
+                        return Object.assign(row, { "Status": { status, response: json, App } });
                     }
                 });
             });
