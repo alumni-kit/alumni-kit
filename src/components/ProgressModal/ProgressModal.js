@@ -26,7 +26,10 @@ class ProgressModal extends Component {
         }
     }
 
-    close = () => this.props.App.setState({ openProgressModal: false });
+    close = () => {
+        this.props.App.setState({ openProgressModal: false });
+        this.togglePauseResume('pause');
+    }
 
     startPiplSearch = async () => {
         const { App } = this.props;
@@ -182,9 +185,9 @@ class ProgressModal extends Component {
         return status;
     }
 
-    togglePauseResume = () => {
+    togglePauseResume = (action) => {
         this.setState({
-            pause: !this.state.pause,
+            pause: action || !this.state.pause,
         }, () => {
             if (!this.state.pause) {
                 this.startPiplSearch();
