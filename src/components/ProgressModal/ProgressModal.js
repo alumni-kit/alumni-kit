@@ -93,7 +93,7 @@ class ProgressModal extends Component {
                     const queryString = qs.stringify(requestObject);
                     const newRow = await this.getNewRow(queryString);
 
-                    App.state.rows[index] = newRow;
+                    App.state.rows[index] = Object.assign(row, newRow);
 
                     this.setState({ completedSearches: index + 1, rows: App.state.rows }, () => window.dispatchEvent(new Event('resize')));
                     resolve(Object.assign(row, newRow));
@@ -108,7 +108,7 @@ class ProgressModal extends Component {
 
                 setTimeout(() => {
                     App.setState({ openProgressModal: false, openCompletionModal: true });
-                }, 1000);
+                }, 500);
             })
             .catch(err => console.warn(err));
     }

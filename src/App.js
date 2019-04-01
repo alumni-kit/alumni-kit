@@ -25,6 +25,7 @@ class App extends Component {
     openReviewModal: false,
     piplApiKey: window.process.env.PIPL_API_KEY,
     rows: [],
+    selectedRow: {},
     validPiplApiKey: true,
   }
   

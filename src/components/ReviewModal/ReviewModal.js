@@ -30,6 +30,7 @@ class ReviewModal extends Component {
                     <Modal.Header>Review</Modal.Header>
                     <Modal.Content className="review-modal__content">
                         <p>This is the review Modal</p>
+                        <p>Selected row: {this.props.App.state.selectedRow.id}</p>
                     </Modal.Content>
                     <Modal.Actions>
                         <Button onClick={this.openConfirmModal}>Start Pipl Search</Button>

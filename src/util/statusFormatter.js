@@ -1,18 +1,21 @@
 import { Button, Icon } from 'semantic-ui-react';
 import React from 'react';
 
-const openReviewModal = App => {
-    App.setState({ openReviewModal: true });
+const openReviewModal = ({ row, value }) => {
+    console.log({ row });
+    const { App } = value;
+    App.setState({ openReviewModal: true, selectedRow: row });
 }
 
-const StatusFormatter = ({ value }) => {
-    const App = value.App;
+const StatusFormatter = props => {
+    const { value } = props;
+    console.log({ props });
     if (value.status === "Complete") {
-        return (<Button color="green" onClick={openReviewModal.bind(this, App)}><Icon name="checkmark" /> Review</Button>);
+        return (<Button color="green" onClick={openReviewModal.bind(this, props)}><Icon name="checkmark" /> Review</Button>);
     } else if (value.status === "Partial") {
-        return (<Button color="yellow" onClick={openReviewModal.bind(this, App)}><Icon name="warning sign" /> Review</Button>);
+        return (<Button color="yellow" onClick={openReviewModal.bind(this, props)}><Icon name="warning sign" /> Review</Button>);
     } else if (value.status === "Error") {
-        return (<Button color="red" onClick={openReviewModal.bind(this, App)}><Icon name="remove" /> Review</Button>);
+        return (<Button color="red" onClick={openReviewModal.bind(this, props)}><Icon name="remove" /> Review</Button>);
     } else {
         return value;
     }
