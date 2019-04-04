@@ -4,6 +4,7 @@ import Dropzone from "./components/Dropzone/Dropzone";
 import generateMenu from './util/generateMenu';
 import CompletionModal from './components/CompletionModal/CompletionModal';
 import ConfirmModal from './components/ConfirmModal/ConfirmModal';
+import EarlyExitModal from './components/EarlyExitModal/EarlyExitModal';
 import ProgressModal from './components/ProgressModal/ProgressModal';
 import ReviewModal from './components/ReviewModal/ReviewModal';
 import React, { Component } from 'react';
@@ -21,6 +22,7 @@ class App extends Component {
     openApiKeyModal: false,
     openConfirmModal: false,
     openCompletionModal: false,
+    openEarlyExitModal: false,
     openProgressModal: false,
     openReviewModal: false,
     piplApiKey: window.process.env.PIPL_API_KEY,
@@ -91,6 +93,7 @@ class App extends Component {
       openApiKeyModal,
       openCompletionModal,
       openConfirmModal,
+      openEarlyExitModal,
       openProgressModal,
       openReviewModal,
       piplApiKey,
@@ -133,6 +136,7 @@ class App extends Component {
         <ConfirmModal App={this} openConfirmModal={openConfirmModal} />
         <ProgressModal App={this} openProgressModal={openProgressModal} />
         <CompletionModal App={this} openCompletionModal={openCompletionModal} />
+        <EarlyExitModal App={this} openEarlyExitModal={openEarlyExitModal} />
         <ReviewModal App={this} openReviewModal={openReviewModal} />
       </div>
     );

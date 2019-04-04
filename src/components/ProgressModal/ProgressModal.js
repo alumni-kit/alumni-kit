@@ -27,7 +27,8 @@ class ProgressModal extends Component {
     }
 
     close = () => {
-        this.props.App.setState({ openProgressModal: false });
+        const { completedSearches, totalSearches } = this.state;
+        this.props.App.setState({ openProgressModal: false, openEarlyExitModal: true, completedSearches, totalSearches });
         this.togglePauseResume('pause');
     }
 
@@ -44,13 +45,18 @@ class ProgressModal extends Component {
             "Mailing Address": "addresses"
         }
 
+        this.setState({
+            completedSearches: 0,
+            status: "Searching...",
+            pause: false,
+            pauseIndex: 0,
+        });
+
         const updatedRows = await rows.map((row, index) => {
             return () => {
                 return new Promise(async (resolve, reject) => {
-                    console.log(index, this.state.pauseIndex);
                     if (this.state.pause) {
                         this.setState({ pauseIndex: index });
-                        console.log({ pauseIndex: index });
                         reject(`Paused at index: ${index}`);
                     } else if (index < this.state.pauseIndex) {
                         return resolve('Skipping until we reach pause index');
@@ -95,10 +101,9 @@ class ProgressModal extends Component {
                     const requestObject = { person: JSON.stringify(person), key: window.process.env.PIPL_API_KEY };
                     const queryString = qs.stringify(requestObject);
                     const newRow = await this.getNewRow(queryString);
-
                     App.state.rows[index] = Object.assign(row, newRow);
 
-                    this.setState({ completedSearches: index + 1, rows: App.state.rows }, () => window.dispatchEvent(new Event('resize')));
+                    this.setState({ completedSearches: index + 1 }, () => window.dispatchEvent(new Event('resize')));
                     resolve(Object.assign(row, newRow));
                 });
             };

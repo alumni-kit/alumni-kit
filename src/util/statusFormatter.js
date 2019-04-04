@@ -2,14 +2,12 @@ import { Button, Icon } from 'semantic-ui-react';
 import React from 'react';
 
 const openReviewModal = ({ row, value }) => {
-    console.log({ row });
     const { App } = value;
     App.setState({ openReviewModal: true, selectedRow: row });
 }
 
 const StatusFormatter = props => {
     const { value } = props;
-    console.log({ props });
     if (value.status === "Complete") {
         return (<Button color="green" onClick={openReviewModal.bind(this, props)}><Icon name="checkmark" /> Review</Button>);
     } else if (value.status === "Partial") {
