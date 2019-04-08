@@ -117,27 +117,33 @@ class ProgressModal extends Component {
     getNewRow = async (queryString) => {
         const { App } = this.props;    
         return await Promise.delay(250).then(() =>  {
-            return fetch('/temp/person.json')
+            return fetch('/temp/normal_response.json')
                 .then(response => response.json())
                 .then(async json => {
-                    const possiblePerson = json.possible_persons[0];
+                    let possiblePerson;
+                    if (json.person) {
+                        possiblePerson = json.person;
+                    } else if (json.possible_persons && json.possible_persons.length > 0) {
+                        possiblePerson = json.possible_persons[0];
+                    }
+
                     const row = {
-                        "First Name": possiblePerson.names[0].first,
-                        "Last Name": possiblePerson.names[0].last,
+                        "First Name": (possiblePerson.names || [])[0].first,
+                        "Last Name": (possiblePerson.names || [])[0].last,
                         "Email1": (possiblePerson.emails || [])[0] ? possiblePerson.emails[0].address : "",
                         "Email2": (possiblePerson.emails || [])[1] ? possiblePerson.emails[1].address : "",
-                        "Phone1": possiblePerson.phones[0] ? possiblePerson.phones[0].display : "",
-                        "Phone2": possiblePerson.phones[1] ? possiblePerson.phones[1].display : "",
-                        "Mailing Address": possiblePerson.addresses[0] ? possiblePerson.addresses[0].display : "",
-                        "Education": possiblePerson.educations[0] ? possiblePerson.educations[0].display : "",
-                        "Job": possiblePerson.jobs[0] ? possiblePerson.jobs[0].display : ""
+                        "Phone1": (possiblePerson.phones || [])[0] ? possiblePerson.phones[0].display : "",
+                        "Phone2": (possiblePerson.phones || [])[1] ? possiblePerson.phones[1].display : "",
+                        "Mailing Address": (possiblePerson.addresses || [])[0] ? possiblePerson.addresses[0].display : "",
+                        "Education": (possiblePerson.educations || [])[0] ? possiblePerson.educations[0].display : "",
+                        "Job": (possiblePerson.jobs || [])[0] ? possiblePerson.jobs[0].display : ""
                     }
 
                     if (!possiblePerson.emails) {
-                        const emailObject = await this.getEmailFromSearchPointer(row);
+                        const {emailObject, searchPointerResponse } = await this.getEmailFromSearchPointer(row);
                         const combinedResult = Object.assign(row, emailObject);
                         const status = this.determineStatus(combinedResult);
-                        return Object.assign(combinedResult, { "Status": { status, response: json, App } });
+                        return Object.assign(combinedResult, { "Status": { status, response: json, searchPointerResponse,  App } });
                     } else {
                         const status = this.determineStatus(row);
                         return Object.assign(row, { "Status": { status, response: json, App } });
@@ -157,7 +163,7 @@ class ProgressModal extends Component {
                         "Email2": (possiblePerson.emails || [])[1] ? possiblePerson.emails[1].address : "",
                 };
 
-                return emailObject;
+                return { emailObject, searchPointerResponse: json };
             });
         });
     };
@@ -172,6 +178,7 @@ class ProgressModal extends Component {
         }
 
         if (missingColumns.length) {
+            console.log(missingColumns);
             status = "Partial";
         }
 

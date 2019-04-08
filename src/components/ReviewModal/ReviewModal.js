@@ -18,6 +18,13 @@ class ReviewModal extends Component {
     openConfirmModal = () => this.props.App.setState({ openReviewModal: false, openConfirmModal: true });
 
     render() {
+        let searchPointerPerson = null;
+        if (this.props.App.state.selectedRow.Status &&
+            this.props.App.state.selectedRow.Status.searchPointerResponse &&
+            this.props.App.state.selectedRow.Status.searchPointerResponse.person) {
+                searchPointerPerson = this.props.App.state.selectedRow.Status.searchPointerResponse.person;
+        }
+
         return (
             <>
                 <Modal
@@ -29,8 +36,6 @@ class ReviewModal extends Component {
                 >
                     <Modal.Header>Review</Modal.Header>
                     <Modal.Content className="review-modal__content">
-                        <p>This is the review Modal</p>
-                        <p>Selected row id: {this.props.App.state.selectedRow.id}</p>
                         <Card.Group>
                         {this.props.App.state.selectedRow.Status &&
                             this.props.App.state.selectedRow.Status.response &&
