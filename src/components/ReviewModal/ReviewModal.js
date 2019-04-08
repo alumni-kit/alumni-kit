@@ -52,6 +52,13 @@ class ReviewModal extends Component {
                                         </ul>
                                     </li>
                                 }
+                                {this.props.App.state.selectedRow.Status.status === "Error" &&
+                                    <li><b>Message:</b>
+                                        <ul>
+                                            {this.props.App.state.selectedRow.Status.response.message}
+                                        </ul>
+                                    </li>
+                                }
                             </ul>
                         }
                         <Divider />

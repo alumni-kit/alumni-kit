@@ -117,7 +117,7 @@ class ProgressModal extends Component {
     getNewRow = async (queryString) => {
         const { App } = this.props;    
         return await Promise.delay(250).then(() =>  {
-            return fetch('/temp/normal_response.json')
+            return fetch('/temp/normal_responsea.json')
                 .then(response => response.json())
                 .then(async json => {
                     let possiblePerson;
@@ -128,8 +128,8 @@ class ProgressModal extends Component {
                     }
 
                     const row = {
-                        "First Name": (possiblePerson.names || [])[0].first,
-                        "Last Name": (possiblePerson.names || [])[0].last,
+                        "First Name": (possiblePerson.names || [])[0] ? possiblePerson.names[0].first : "",
+                        "Last Name": (possiblePerson.names || [])[0] ? possiblePerson.names[0].last : "",
                         "Email1": (possiblePerson.emails || [])[0] ? possiblePerson.emails[0].address : "",
                         "Email2": (possiblePerson.emails || [])[1] ? possiblePerson.emails[1].address : "",
                         "Phone1": (possiblePerson.phones || [])[0] ? possiblePerson.phones[0].display : "",
@@ -148,6 +148,9 @@ class ProgressModal extends Component {
                         const { status, missingColumns } = this.determineStatus(row);
                         return Object.assign(row, { "Status": { status, response: json, App, missingColumns } });
                     }
+                })
+                .catch(err => {
+                    return Object.assign({}, { "Status": { status: "Error", response: err, App } });
                 });
             });
     }
