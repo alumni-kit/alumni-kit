@@ -142,11 +142,11 @@ class ProgressModal extends Component {
                     if (!possiblePerson.emails) {
                         const {emailObject, searchPointerResponse } = await this.getEmailFromSearchPointer(row);
                         const combinedResult = Object.assign(row, emailObject);
-                        const status = this.determineStatus(combinedResult);
-                        return Object.assign(combinedResult, { "Status": { status, response: json, searchPointerResponse,  App } });
+                        const { status, missingColumns } = this.determineStatus(combinedResult);
+                        return Object.assign(combinedResult, { "Status": { status, response: json, searchPointerResponse,  App, missingColumns } });
                     } else {
-                        const status = this.determineStatus(row);
-                        return Object.assign(row, { "Status": { status, response: json, App } });
+                        const { status, missingColumns } = this.determineStatus(row);
+                        return Object.assign(row, { "Status": { status, response: json, App, missingColumns } });
                     }
                 });
             });
@@ -178,11 +178,10 @@ class ProgressModal extends Component {
         }
 
         if (missingColumns.length) {
-            console.log(missingColumns);
             status = "Partial";
         }
 
-        return status;
+        return { status, missingColumns };
     }
 
     togglePauseResume = () => {

@@ -1,4 +1,4 @@
-import { Button, Card, Image, List, Modal } from "semantic-ui-react";
+import { Button, Card, Divider, Image, List, Modal } from "semantic-ui-react";
 import React, { Component } from 'react';
 
 class ReviewModal extends Component {
@@ -36,6 +36,25 @@ class ReviewModal extends Component {
                 >
                     <Modal.Header>Review</Modal.Header>
                     <Modal.Content className="review-modal__content">
+                        {this.props.App.state.selectedRow.Status &&
+                            <ul>
+                                <li><b>Status:</b>
+                                    <ul>
+                                        <li>{this.props.App.state.selectedRow.Status.status}</li>
+                                    </ul>
+                                </li>
+                                {this.props.App.state.selectedRow.Status.missingColumns &&
+                                    <li><b>Missing Fields:</b>
+                                        <ul>
+                                            {this.props.App.state.selectedRow.Status.missingColumns.map(missingColumn => (
+                                                <li>{missingColumn}</li>
+                                            ))}
+                                        </ul>
+                                    </li>
+                                }
+                            </ul>
+                        }
+                        <Divider />
                         {searchPointerPerson &&
                             <Card.Group>
                                 <Card fluid color="green">
