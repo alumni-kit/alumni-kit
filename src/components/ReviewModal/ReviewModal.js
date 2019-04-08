@@ -36,6 +36,36 @@ class ReviewModal extends Component {
                 >
                     <Modal.Header>Review</Modal.Header>
                     <Modal.Content className="review-modal__content">
+                        {searchPointerPerson &&
+                            <Card.Group>
+                                <Card fluid color="green">
+                                    <Card.Content>
+                                        <Card.Header>Current match:</Card.Header>
+                                        {searchPointerPerson.images && searchPointerPerson.images[0] &&
+                                            (<Image floated='right' size='mini' src={searchPointerPerson.images[0].url} onError={(e) => console.log("Error!", e.target.style = "display: none")}/>)
+                                        }
+                                        {searchPointerPerson.names && searchPointerPerson.names[0] &&
+                                            (<Card.Header>{searchPointerPerson.names[0].display}</Card.Header>)
+                                        }
+                                    </Card.Content>
+                                    {(searchPointerPerson.dob || searchPointerPerson.educations || searchPointerPerson.jobs) &&
+                                        <Card.Content>
+                                            <List bulleted>
+                                                {searchPointerPerson.dob &&
+                                                    (<List.Item>{searchPointerPerson.dob.display}</List.Item>)
+                                                }
+                                                {searchPointerPerson.educations && searchPointerPerson.educations[0] &&
+                                                    (<List.Item>{searchPointerPerson.educations[0].display}</List.Item>)
+                                                }
+                                                {searchPointerPerson.jobs && searchPointerPerson.jobs[0] &&
+                                                    (<List.Item>{searchPointerPerson.jobs[0].display}</List.Item>)
+                                                }
+                                            </List>
+                                        </Card.Content>
+                                    }
+                                </Card>
+                            </Card.Group>
+                        }
                         <Card.Group>
                         {this.props.App.state.selectedRow.Status &&
                             this.props.App.state.selectedRow.Status.response &&
