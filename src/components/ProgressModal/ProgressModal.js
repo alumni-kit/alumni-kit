@@ -117,7 +117,7 @@ class ProgressModal extends Component {
     getNewRow = async (queryString) => {
         const { App } = this.props;    
         return await Promise.delay(250).then(() =>  {
-            return fetch('/temp/normal_responsea.json')
+            return fetch('/temp/person.json')
                 .then(response => response.json())
                 .then(async json => {
                     let possiblePerson;
@@ -140,9 +140,22 @@ class ProgressModal extends Component {
                     }
 
                     if (!possiblePerson.emails) {
-                        const {emailObject, searchPointerResponse } = await this.getEmailFromSearchPointer(row);
+                        const searchPointerResponse = await this.getSearchPointerResponse(row);
+                        console.log({ searchPointerResponse });
+
+                        const possiblePerson = searchPointerResponse.person;
+                        const emailObject = {
+                            "Email1": (possiblePerson && possiblePerson.emails || [])[0] ? possiblePerson.emails[0].address : "",
+                            "Email2": (possiblePerson && possiblePerson.emails || [])[1] ? possiblePerson.emails[1].address : "",
+                        };
+
                         const combinedResult = Object.assign(row, emailObject);
-                        const { status, missingColumns } = this.determineStatus(combinedResult);
+                        let { status, missingColumns } = this.determineStatus(combinedResult);
+
+                        if (searchPointerResponse instanceof Error) {
+                            status = "Error";
+                        }
+
                         return Object.assign(combinedResult, { "Status": { status, response: json, searchPointerResponse,  App, missingColumns } });
                     } else {
                         const { status, missingColumns } = this.determineStatus(row);
@@ -155,19 +168,11 @@ class ProgressModal extends Component {
             });
     }
     
-    getEmailFromSearchPointer = async (row) => {
+    getSearchPointerResponse = async (row) => {
         return await Promise.delay(250).then(() =>  {
             return fetch('/temp/search_pointer_response.json')
                 .then(response => response.json())
-                .then(json => {
-                    const possiblePerson = json.person;
-                    const emailObject = {
-                        "Email1": (possiblePerson.emails || [])[0] ? possiblePerson.emails[0].address : "",
-                        "Email2": (possiblePerson.emails || [])[1] ? possiblePerson.emails[1].address : "",
-                };
-
-                return { emailObject, searchPointerResponse: json };
-            });
+                .catch(err => err);
         });
     };
 
