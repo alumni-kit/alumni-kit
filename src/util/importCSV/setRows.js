@@ -6,7 +6,7 @@ const setRows = function(filePath, rowsFromCSV = []) {
         return row;
     });
 
-    App.setState({ filePath, rows });
+    App.setState({ filePath, rows, totalRows: JSON.parse(JSON.stringify(rows)) });
 }
 
 export default setRows;

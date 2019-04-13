@@ -15,7 +15,7 @@ class ReviewModal extends Component {
 
     close = () => this.props.App.setState({ openReviewModal: false });
 
-    openConfirmModal = () => this.props.App.setState({ openReviewModal: false, openConfirmModal: true });
+    openConfirmModal = () => this.props.App.setState({ openReviewModal: false, openConfirmModal: true, rows: [this.props.App.state.selectedRow] });
 
     render() {
         let searchPointerPerson = null;
@@ -141,7 +141,7 @@ class ReviewModal extends Component {
                                                 </Card.Content>
                                             }
                                             <Card.Content extra>
-                                                <Button onClick={this.openConfirmModal}>Start Follow-up Pipl Search</Button>
+                                                <Button onClick={this.openConfirmModal}>Replace</Button>
                                             </Card.Content>
                                         </Card>
                                     )

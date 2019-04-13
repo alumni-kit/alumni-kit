@@ -28,6 +28,7 @@ class App extends Component {
     piplApiKey: window.process.env.PIPL_API_KEY,
     rows: [],
     selectedRow: {},
+    totalRows: [],
     validPiplApiKey: true,
   }
   
@@ -97,7 +98,7 @@ class App extends Component {
       openProgressModal,
       openReviewModal,
       piplApiKey,
-      rows,
+      totalRows,
       validPiplApiKey
     } = this.state;
     return (
@@ -111,14 +112,14 @@ class App extends Component {
           validPiplApiKey={validPiplApiKey}
           updatePiplApiKey={this.updatePiplApiKey}
         />
-        {rows.length > 0 ? (
+        {totalRows.length > 0 ? (
           <ReactDataGrid
             columns={this.state.columns}
             headerRowHeight={35}
             minHeight={window.visualViewport.height}
             rowHeight={70}
-            rowGetter={i => this.state.rows[i]}
-            rowsCount={this.state.rows.length}
+            rowGetter={i => totalRows[i]}
+            rowsCount={totalRows.length}
             enableCellSelect={false}
             toolbar={() => {
               return (

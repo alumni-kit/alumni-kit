@@ -89,7 +89,7 @@ class ProgressModal extends Component {
                     const requestObject = { person: JSON.stringify(person), key: window.process.env.PIPL_API_KEY };
                     const queryString = qs.stringify(requestObject);
                     const newRow = await this.getNewRow(queryString);
-                    App.state.rows[index] = Object.assign(row, newRow);
+                    App.state.totalRows[row.id] = Object.assign(row, newRow);
 
                     if (this.state.pause) {
                         this.setState({ pauseIndex: index });
