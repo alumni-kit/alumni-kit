@@ -37,53 +37,55 @@ class ReviewModal extends Component {
                     <Modal.Header>Review</Modal.Header>
                     <Modal.Content className="review-modal__content">
                         {this.props.App.state.selectedRow.Status &&
-                            <ul>
-                                <li><b>Status:</b>
-                                    <ul>
-                                        <li>{this.props.App.state.selectedRow.Status.status}</li>
-                                    </ul>
-                                </li>
-                                {this.props.App.state.selectedRow.Status.missingColumns &&
-                                    this.props.App.state.selectedRow.Status.missingColumns.length > 0 &&
-                                    <li><b>Missing Fields:</b>
+                            <>
+                                <ul>
+                                    <li><b>Status:</b>
                                         <ul>
-                                            {this.props.App.state.selectedRow.Status.missingColumns.map(missingColumn => (
-                                                <li>{missingColumn}</li>
-                                            ))}
+                                            <li>{this.props.App.state.selectedRow.Status.status}</li>
                                         </ul>
                                     </li>
-                                }
-                                {this.props.App.state.selectedRow.Status.status === "Error" &&
-                                    <li>
-                                        <b>Message:</b>
-                                        {this.props.App.state.selectedRow.Status.response && this.props.App.state.selectedRow.Status.response.message &&
+                                    {this.props.App.state.selectedRow.Status.missingColumns &&
+                                        this.props.App.state.selectedRow.Status.missingColumns.length > 0 &&
+                                        <li><b>Missing Fields:</b>
                                             <ul>
-                                                <li>
-                                                    <b>Initial Search:</b>
-                                                    {this.props.App.state.selectedRow.Status.response.message}
-                                                </li>
+                                                {this.props.App.state.selectedRow.Status.missingColumns.map(missingColumn => (
+                                                    <li>{missingColumn}</li>
+                                                ))}
                                             </ul>
-                                        }
-                                        {this.props.App.state.selectedRow.Status.searchPointerResponse && this.props.App.state.selectedRow.Status.searchPointerResponse.message &&                
-                                            <ul>
-                                                <li>
-                                                    <b>Follow-Up Search:</b>
-                                                    {this.props.App.state.selectedRow.Status.searchPointerResponse.message}
-                                                </li>
-                                            </ul>
-                                        }
-                                    </li>
-                                }
-                            </ul>
+                                        </li>
+                                    }
+                                    {this.props.App.state.selectedRow.Status.status === "Error" &&
+                                        <li>
+                                            <b>Message:</b>
+                                            {this.props.App.state.selectedRow.Status.response && this.props.App.state.selectedRow.Status.response.message &&
+                                                <ul>
+                                                    <li>
+                                                        <b>Initial Search:</b>
+                                                        {this.props.App.state.selectedRow.Status.response.message}
+                                                    </li>
+                                                </ul>
+                                            }
+                                            {this.props.App.state.selectedRow.Status.searchPointerResponse && this.props.App.state.selectedRow.Status.searchPointerResponse.message &&                
+                                                <ul>
+                                                    <li>
+                                                        <b>Follow-Up Search:</b>
+                                                        {this.props.App.state.selectedRow.Status.searchPointerResponse.message}
+                                                    </li>
+                                                </ul>
+                                            }
+                                        </li>
+                                    }
+                                </ul>
+                                <Divider />
+                            </>
                         }
-                        <Divider />
                         {searchPointerPerson &&
                             <Card.Group>
                                 <Card fluid color="green">
                                     <Card.Content>
                                         <Card.Header>Current match:</Card.Header>
                                         {searchPointerPerson.images && searchPointerPerson.images[0] &&
-                                            (<Image floated='right' size='mini' src={searchPointerPerson.images[0].url} onError={(e) => console.log("Error!", e.target.style = "display: none")}/>)
+                                            (<Image floated='right' size='mini' src={searchPointerPerson.images[0].url} onError={e => e.target.style = "display: none"}/>)
                                         }
                                         {searchPointerPerson.names && searchPointerPerson.names[0] &&
                                             (<Card.Header>{searchPointerPerson.names[0].display}</Card.Header>)
@@ -116,7 +118,7 @@ class ReviewModal extends Component {
                                         <Card fluid key={person['@search_pointer']}>
                                             <Card.Content>
                                                 {person.images && person.images[0] &&
-                                                    (<Image floated='right' size='mini' src={person.images[0].url} onError={(e) => console.log("Error!", e.target.style = "display: none")}/>)
+                                                    (<Image floated='right' size='mini' src={person.images[0].url} onError={e =>  e.target.style = "display: none"}/>)
                                                 }
                                                 {person.names && person.names[0] &&
                                                     (<Card.Header>{person.names[0].display}</Card.Header>)

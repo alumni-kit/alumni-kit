@@ -50,6 +50,10 @@ class App extends Component {
     this.setState({ openApiKeyModal: true, piplApiKey });
   }
 
+  openReviewModal = (index, row, header) => {
+    this.setState({ openReviewModal: true, selectedRow: row });
+  }
+
   savePiplApiKey = () => {
     const { piplApiKey } = this.state;
 
@@ -117,6 +121,7 @@ class App extends Component {
             columns={this.state.columns}
             headerRowHeight={35}
             minHeight={window.visualViewport.height}
+            onRowClick={this.openReviewModal}
             rowHeight={70}
             rowGetter={i => totalRows[i]}
             rowsCount={totalRows.length}

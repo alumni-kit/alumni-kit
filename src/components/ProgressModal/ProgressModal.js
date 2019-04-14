@@ -165,14 +165,14 @@ class ProgressModal extends Component {
                             status = "Error";
                         }
 
-                        return Object.assign(combinedResult, { "Status": { status, response: json, searchPointerResponse,  App, missingColumns } });
+                        return Object.assign(combinedResult, { "Status": { status, response: json, searchPointerResponse,  missingColumns } });
                     } else {
                         const { status, missingColumns } = this.determineStatus(row);
-                        return Object.assign(row, { "Status": { status, response: json, App, missingColumns } });
+                        return Object.assign(row, { "Status": { status, response: json, missingColumns } });
                     }
                 })
                 .catch(err => {
-                    return Object.assign({}, { "Status": { status: "Error", response: err, App } });
+                    return Object.assign({}, { "Status": { status: "Error", response: err } });
                 });
             });
     }

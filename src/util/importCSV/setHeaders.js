@@ -3,8 +3,8 @@ import StatusFormatter from 'util/statusFormatter';
 const setHeaders = function(headers = []) {
     const App = this;
     const requiredFields = {
-        "Status": "Status",
         "id": "id",
+        "Status": "Status",
         "First Name": "First Name",
         "Last Name": "Last Name",
         "Email1": "Email1",
