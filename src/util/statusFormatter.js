@@ -1,8 +1,4 @@
-import { Button, Icon } from 'semantic-ui-react';
-import React from 'react';
-
-const StatusFormatter = props => {
-    const { value } = props;
+const StatusFormatter = ({value}) => {
     if (value.status) {
         return value.status;
     } else {

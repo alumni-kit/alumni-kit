@@ -96,7 +96,7 @@ class ProgressModal extends Component {
         
                     const requestObject = { person: JSON.stringify(person), key: window.process.env.PIPL_API_KEY };
                     const queryString = qs.stringify(requestObject);
-                    const newRow = await this.getNewRow(queryString);
+                    const newRow = await this.getNewRow(queryString, row);
                     console.log('writing to row:', row.id);
                     App.state.totalRows[row.id] = Object.assign(row, newRow);
                     this.setState({ completedSearches: index + 1 }, () => window.dispatchEvent(new Event('resize')));
@@ -123,8 +123,7 @@ class ProgressModal extends Component {
             .catch(err => console.warn(err));
     }
     
-    getNewRow = async (queryString) => {
-        const { App } = this.props;    
+    getNewRow = async (queryString, previousRow) => {
         return await Promise.delay(250).then(() =>  {
             return fetch('/temp/person.json')
                 .then(response => response.json())
@@ -166,14 +165,28 @@ class ProgressModal extends Component {
                             status = "Error";
                         }
 
-                        return Object.assign(combinedResult, { "Status": { status, response: json, searchPointerResponse,  missingColumns }, "Last Update": new Date().toUTCString() });
+                        return Object.assign(
+                            combinedResult,
+                            {
+                                "Status": { status, response: json, searchPointerResponse,  missingColumns, previousRow },
+                                "Last Update": new Date().toUTCString(),
+                            }
+                        );
                     } else {
                         const { status, missingColumns } = this.determineStatus(row);
-                        return Object.assign(row, { "Status": { status, response: json, missingColumns }, "Last Update": new Date().toUTCString() });
+                        return Object.assign(
+                            row,
+                            { "Status": { status, response: json, missingColumns, previousRow },
+                            "Last Update": new Date().toUTCString()
+                        });
                     }
                 })
                 .catch(err => {
-                    return Object.assign({}, { "Status": { status: "Error", response: err }, "Last Update": new Date().toUTCString() });
+                    return Object.assign(
+                        previousRow,
+                        { "Status": { status: "Error", response: err, previousRow },
+                        "Last Update": new Date().toUTCString() 
+                    });
                 });
             });
     }
