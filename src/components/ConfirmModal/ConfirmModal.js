@@ -18,7 +18,7 @@ class ConfirmModal extends Component {
 
         const numberOfSearches = App.state.rows.length;
         const chargePerSearch = 0.80;
-        const estimatedCost = Math.round(numberOfSearches * chargePerSearch).toFixed(2);
+        const estimatedCost = (numberOfSearches * chargePerSearch).toFixed(2);
 
         return estimatedCost;
     }

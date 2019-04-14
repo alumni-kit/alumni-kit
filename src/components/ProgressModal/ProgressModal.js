@@ -22,13 +22,13 @@ class ProgressModal extends Component {
         this.setState({ open: props.openProgressModal, totalSearches: props.App.state.rows.length });
 
         if (props.openProgressModal) {
+            this.setState({ completedSearches: 0, pauseIndex: 0 });
             this.startPiplSearch();
         }
     }
 
     close = () => {
-        const { completedSearches, totalSearches } = this.state;
-        this.props.App.setState({ openProgressModal: false, openEarlyExitModal: true, completedSearches, totalSearches });
+        this.props.App.setState({ openProgressModal: false, openEarlyExitModal: true });
         this.setState({ pause: true });
     }
 
@@ -73,7 +73,15 @@ class ProgressModal extends Component {
                     person.names.push(nameObject);
         
                     for (let key in row) {
-                        if (key !== "First Name" && key !== "Last Name" && key !== "Mailing Address" && key !== "id" && key !== "Education" && key !== "Job" && key !== "Status") {
+                        if (
+                            key !== "First Name" &&
+                            key !== "Last Name" &&
+                            key !== "Mailing Address" &&
+                            key !== "id" &&
+                            key !== "Education" &&
+                            key !== "Job" &&
+                            key !== "Status"
+                        ) {
                             if (row[key]) {
                                 const arrayProperty = propertyDictionary[key];
                                 person[arrayProperty].push(row[key]);
@@ -89,14 +97,15 @@ class ProgressModal extends Component {
                     const requestObject = { person: JSON.stringify(person), key: window.process.env.PIPL_API_KEY };
                     const queryString = qs.stringify(requestObject);
                     const newRow = await this.getNewRow(queryString);
+                    console.log('writing to row:', row.id);
                     App.state.totalRows[row.id] = Object.assign(row, newRow);
+                    this.setState({ completedSearches: index + 1 }, () => window.dispatchEvent(new Event('resize')));
 
                     if (this.state.pause) {
                         this.setState({ pauseIndex: index });
                         reject(`Paused at index: ${index}`);
                     }
 
-                    this.setState({ completedSearches: index + 1 }, () => window.dispatchEvent(new Event('resize')));
                     resolve(Object.assign(row, newRow));
                 });
             };
