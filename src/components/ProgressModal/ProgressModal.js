@@ -137,6 +137,7 @@ class ProgressModal extends Component {
                     }
 
                     const row = {
+                        "Match Confidence": (possiblePerson["@match"]) ? possiblePerson["@match"] : "",
                         "First Name": (possiblePerson.names || [])[0] ? possiblePerson.names[0].first : "",
                         "Last Name": (possiblePerson.names || [])[0] ? possiblePerson.names[0].last : "",
                         "Email1": (possiblePerson.emails || [])[0] ? possiblePerson.emails[0].address : "",
@@ -165,14 +166,14 @@ class ProgressModal extends Component {
                             status = "Error";
                         }
 
-                        return Object.assign(combinedResult, { "Status": { status, response: json, searchPointerResponse,  missingColumns } });
+                        return Object.assign(combinedResult, { "Status": { status, response: json, searchPointerResponse,  missingColumns }, "Last Update": new Date().toUTCString() });
                     } else {
                         const { status, missingColumns } = this.determineStatus(row);
-                        return Object.assign(row, { "Status": { status, response: json, missingColumns } });
+                        return Object.assign(row, { "Status": { status, response: json, missingColumns }, "Last Update": new Date().toUTCString() });
                     }
                 })
                 .catch(err => {
-                    return Object.assign({}, { "Status": { status: "Error", response: err } });
+                    return Object.assign({}, { "Status": { status: "Error", response: err }, "Last Update": new Date().toUTCString() });
                 });
             });
     }

@@ -5,6 +5,8 @@ const setHeaders = function(headers = []) {
     const requiredFields = {
         "id": "id",
         "Status": "Status",
+        "Match Confidence": "Match Confidence",
+        "Last Update": "Last Update",
         "First Name": "First Name",
         "Last Name": "Last Name",
         "Email1": "Email1",
