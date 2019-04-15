@@ -1,4 +1,4 @@
-import StatusFormatter from 'util/statusFormatter';
+import StatusFormatter from 'util/formatters/statusFormatter';
 
 const setHeaders = function(headers = []) {
     const App = this;

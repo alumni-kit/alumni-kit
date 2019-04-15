@@ -123,7 +123,8 @@ class ProgressModal extends Component {
             .catch(err => console.warn(err));
     }
     
-    getNewRow = async (queryString, previousRow) => {
+    getNewRow = async (queryString, row) => {
+        const previousRow = JSON.parse(JSON.stringify(row));
         return await Promise.delay(250).then(() =>  {
             return fetch('/temp/person.json')
                 .then(response => response.json())
