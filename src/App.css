@@ -51,6 +51,14 @@
 	min-height: calc(100vh - 66px) !important;
 }
 
+.react-grid-Canvas {
+  cursor: pointer;
+}
+
+.rdg-selected {
+  border: 0px;
+}
+
 #dropzone {
   height: 100%;
   padding: 10px;
