@@ -12,7 +12,7 @@ const importCSV = ({csvString, filePath, App}) => {
 
     csvProcess
         .on('header', setHeaders.bind(App))
-        .then(setRows.bind(App, filePath));
+        .then(setRows.bind(App, '', filePath));
 };
 
 export default importCSV;

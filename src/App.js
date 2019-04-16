@@ -18,6 +18,7 @@ const fs = window.require("fs");
 class App extends Component {
   state = {
     columns: [],
+    fileName: '',
     filePath: '',
     openApiKeyModal: false,
     openConfirmModal: false,
@@ -98,6 +99,7 @@ class App extends Component {
 
   render() {
     const {
+      fileName,
       filePath,
       openApiKeyModal,
       openCompletionModal,
@@ -133,7 +135,7 @@ class App extends Component {
             toolbar={() => {
               return (
                 <Segment id="ribbon">
-                  <Header id="ribbon__filename">{filePath}</Header>
+                  <Header id="ribbon__filename">{filePath || fileName}</Header>
                   <Button id="ribbon__start-pipl-search" primary onClick={this.openConfirmModal}>Start Pipl Search</Button>
                 </Segment>
               )
