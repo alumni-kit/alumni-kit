@@ -74,13 +74,10 @@ class ProgressModal extends Component {
         
                     for (let key in row) {
                         if (
-                            key !== "First Name" &&
-                            key !== "Last Name" &&
-                            key !== "Mailing Address" &&
-                            key !== "id" &&
-                            key !== "Education" &&
-                            key !== "Job" &&
-                            key !== "Status"
+                            key === "Email1" ||
+                            key === "Email2" ||
+                            key === "Phone1" ||
+                            key === "Phone2"
                         ) {
                             if (row[key]) {
                                 const arrayProperty = propertyDictionary[key];
