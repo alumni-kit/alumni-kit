@@ -187,7 +187,7 @@ class ReviewModal extends Component {
                     closeIcon
                     onClose={this.close}
                     open={this.state.open}
-                    size="tiny"
+                    size="large"
                 >
                     <Modal.Header>Review</Modal.Header>
                     <Modal.Content className="review-modal__content">
@@ -196,7 +196,7 @@ class ReviewModal extends Component {
                         {/* {this.renderPossibleMatches()} */}
                     </Modal.Content>
                     <Modal.Actions>
-                        <Button color="blue" onClick={this.openConfirmModal}>Search</Button>
+                        <Button color="blue" onClick={this.openConfirmModal}>{this.props.App.state.selectedRow["Last Update"] ? "Retry" : "Search"}</Button>
                         <Button color="yellow" onClick={this.close}>Cancel</Button>
                     </Modal.Actions>
                 </Modal>

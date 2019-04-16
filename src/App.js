@@ -7,6 +7,7 @@ import ConfirmModal from './components/ConfirmModal/ConfirmModal';
 import EarlyExitModal from './components/EarlyExitModal/EarlyExitModal';
 import ProgressModal from './components/ProgressModal/ProgressModal';
 import ReviewModal from './components/ReviewModal/ReviewModal';
+import SearchRemainingRowsModal from './components/SearchRemainingRowsModal/SearchRemainingRowsModal';
 import React, { Component } from 'react';
 import ReactDataGrid from "react-data-grid";
 import { ToastContainer, toast } from "react-toastify";
@@ -26,6 +27,7 @@ class App extends Component {
     openEarlyExitModal: false,
     openProgressModal: false,
     openReviewModal: false,
+    openSearchRemainingRowsModal: false,
     piplApiKey: window.process.env.PIPL_API_KEY,
     rows: [],
     selectedRow: {},
@@ -57,6 +59,29 @@ class App extends Component {
 
   openConfirmModal = () => {
     this.setState({ openConfirmModal: true, rows: this.state.totalRows });
+  }
+
+  openSearchRemainingRowsModal = () => {
+    this.setState({ openSearchRemainingRowsModal: true });
+  }
+
+  openPiplModal = () => {
+    let completedSearches = 0;
+    let totalRowCount = this.state.totalRows.length;
+
+    this.state.totalRows.forEach(row => {
+      if (typeof row.Status === "object" && row.Status.status && row["Last Update"]) {
+          if (row.Status.status === "Complete") {
+              completedSearches++;
+          }
+      }
+    });
+
+    if (totalRowCount - completedSearches > 0 && completedSearches > 0) {
+      this.openSearchRemainingRowsModal();
+    } else {
+      this.openConfirmModal();
+    }
   }
 
   savePiplApiKey = () => {
@@ -107,6 +132,7 @@ class App extends Component {
       openEarlyExitModal,
       openProgressModal,
       openReviewModal,
+      openSearchRemainingRowsModal,
       piplApiKey,
       totalRows,
       validPiplApiKey
@@ -136,7 +162,7 @@ class App extends Component {
               return (
                 <Segment id="ribbon">
                   <Header id="ribbon__filename">{filePath || fileName}</Header>
-                  <Button id="ribbon__start-pipl-search" primary onClick={this.openConfirmModal}>Start Pipl Search</Button>
+                  <Button id="ribbon__start-pipl-search" primary onClick={this.openPiplModal}>Start Pipl Search</Button>
                 </Segment>
               )
             }}
@@ -150,6 +176,7 @@ class App extends Component {
         <CompletionModal App={this} openCompletionModal={openCompletionModal} />
         <EarlyExitModal App={this} openEarlyExitModal={openEarlyExitModal} />
         <ReviewModal App={this} openReviewModal={openReviewModal} />
+        <SearchRemainingRowsModal App={this} openSearchRemainingRowsModal={openSearchRemainingRowsModal} />
       </div>
     );
   }
