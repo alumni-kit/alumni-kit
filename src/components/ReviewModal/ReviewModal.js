@@ -32,23 +32,23 @@ class ReviewModal extends Component {
                                     const previousRow = this.props.App.state.selectedRow.Status.previousRow || {};
                                     if (typeof value !== "object" && previousRow[property] !== value) {
                                         return (
-                                            <li>{property}: {previousRow[property] ||  "previously blank"} <Icon name="arrow right" /> {value || "currently blank"}</li>
+                                            <li>{property}: {previousRow[property] ||  <mark>previously blank</mark>} <Icon name="arrow right" /> {value || <mark>currently blank</mark>}</li>
                                         )
                                     }
                                 })}
                             </ul>
                         ||
-                        <ul>
-                            {Object.entries(this.props.App.state.selectedRow).map((entry) => {
-                                const property = entry[0];
-                                const value = entry[1];
-                                if (typeof value !== "object") {
-                                    return (
-                                        <li>{property}: {value || "currently blank"}</li>
-                                    )
-                                }
-                            })}
-                        </ul>
+                            <ul>
+                                {Object.entries(this.props.App.state.selectedRow).map((entry) => {
+                                    const property = entry[0];
+                                    const value = entry[1];
+                                    if (typeof value !== "object") {
+                                        return (
+                                            <li>{property}: {value || <mark>currently blank</mark>}</li>
+                                        )
+                                    }
+                                })}
+                            </ul>
                         }
                     </li>
                     {this.props.App.state.selectedRow.Status && this.props.App.state.selectedRow.Status.missingColumns &&
@@ -64,18 +64,21 @@ class ReviewModal extends Component {
                     {this.props.App.state.selectedRow.Status && this.props.App.state.selectedRow.Status.status === "Error" &&
                         <li>
                             <b>Message:</b>
-                            {this.props.App.state.selectedRow.Status.response && this.props.App.state.selectedRow.Status.response.message &&
+                            {this.props.App.state.selectedRow.Status.response && (this.props.App.state.selectedRow.Status.response.message || this.props.App.state.selectedRow.Status.response.error) &&
                                 <ul>
                                     <li>
-                                        <b>Initial Search:</b>
-                                        {this.props.App.state.selectedRow.Status.response.message}
+                                        <b>Initial Search: </b>
+                                        {this.props.App.state.selectedRow.Status.response["@http_status_code"] &&
+                                            <span>{this.props.App.state.selectedRow.Status.response["@http_status_code"]} - </span>
+                                        }
+                                        {this.props.App.state.selectedRow.Status.response.message || this.props.App.state.selectedRow.Status.response.error}
                                     </li>
                                 </ul>
                             }
                             {this.props.App.state.selectedRow.Status.searchPointerResponse && this.props.App.state.selectedRow.Status.searchPointerResponse.message &&                
                                 <ul>
                                     <li>
-                                        <b>Follow-Up Search:</b>
+                                        <b>Follow-Up Search: </b>
                                         {this.props.App.state.selectedRow.Status.searchPointerResponse.message}
                                     </li>
                                 </ul>

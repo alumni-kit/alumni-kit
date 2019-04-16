@@ -126,6 +126,16 @@ class ProgressModal extends Component {
             return fetch('/temp/person.json')
                 .then(response => response.json())
                 .then(async json => {
+                    if (json && json["@http_status_code"] && json["@http_status_code"] !== 200) {
+                        const { App } = this.props;
+                        App.showToast("error", `Error code: ${json["@http_status_code"]}, ${json["error"]}`);
+                        return Object.assign(
+                            previousRow,
+                            { "Status": { status: "Error", response: json, previousRow: null },
+                            "Last Update": new Date().toLocaleString()
+                        });
+                    }
+
                     let possiblePerson;
                     if (json.person) {
                         possiblePerson = json.person;
