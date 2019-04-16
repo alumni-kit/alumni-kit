@@ -88,6 +88,9 @@ const generateFileMenu = (reactAppContext) => {
               dialog.showSaveDialog({
                 filters: [{ name: 'Comma Separated Values', extensions: ['csv'] }],
               }, (filePath) => {
+                if (!filePath) {
+                  return;
+                }
                 const fields = reactAppContext.state.columns.map(column => column.name);
                 const rows = reactAppContext.state.rows;
                 const parser = new jsontocsv({ fields });
