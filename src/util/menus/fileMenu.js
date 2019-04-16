@@ -92,7 +92,15 @@ const generateFileMenu = (reactAppContext) => {
                   return;
                 }
                 const fields = reactAppContext.state.columns.map(column => column.name);
-                const rows = reactAppContext.state.rows;
+                const rows = reactAppContext.state.totalRows.map(row => {
+                  if (row.Status && row.Status.status) {
+                    const statusInPlainText = row.Status.status;
+                    row.Status = statusInPlainText;
+                  }
+                  return row;
+                });
+
+                debugger;
                 const parser = new jsontocsv({ fields });
                 const csv = parser.parse(rows);
                 fs.writeFile(filePath, csv, (err) => {
