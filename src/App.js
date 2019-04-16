@@ -54,6 +54,10 @@ class App extends Component {
     this.setState({ openReviewModal: true, selectedRow: row });
   }
 
+  openConfirmModal = () => {
+    this.setState({ openConfirmModal: true, rows: this.state.totalRows });
+  }
+
   savePiplApiKey = () => {
     const { piplApiKey } = this.state;
 
@@ -130,7 +134,7 @@ class App extends Component {
               return (
                 <Segment id="ribbon">
                   <Header id="ribbon__filename">{filePath}</Header>
-                  <Button id="ribbon__start-pipl-search" primary onClick={() => this.setState({ openConfirmModal: true })}>Start Pipl Search</Button>
+                  <Button id="ribbon__start-pipl-search" primary onClick={this.openConfirmModal}>Start Pipl Search</Button>
                 </Segment>
               )
             }}

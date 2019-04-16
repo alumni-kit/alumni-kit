@@ -83,7 +83,6 @@ class ReviewModal extends Component {
                         </li>
                     }
                 </ul>
-                <Divider />
             </>
         )
     }
@@ -194,6 +193,7 @@ class ReviewModal extends Component {
                         {/* {this.renderPossibleMatches()} */}
                     </Modal.Content>
                     <Modal.Actions>
+                        <Button color="blue" onClick={this.openConfirmModal}>Search</Button>
                         <Button color="yellow" onClick={this.close}>Cancel</Button>
                     </Modal.Actions>
                 </Modal>
