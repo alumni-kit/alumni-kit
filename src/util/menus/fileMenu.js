@@ -16,7 +16,7 @@ const generateFileMenu = (reactAppContext) => {
         submenu: [
           {
             label: "New Project",
-            click: generateNewWindow,
+            click: generateNewWindow.bind(reactAppContext),
           },
           {
             label: "Open Project",
