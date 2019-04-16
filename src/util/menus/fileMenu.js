@@ -56,7 +56,7 @@ const generateFileMenu = (reactAppContext) => {
                   filters: [{ name: 'JSON', extensions: ['json'] }],
                 }, writeToProjectFile.bind(reactAppContext));
               } else {
-                writeToProjectFile.apply(reactAppContext,filePath);
+                writeToProjectFile.bind(reactAppContext,filePath)();
               }
             }
           },
