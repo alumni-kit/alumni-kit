@@ -55,9 +55,7 @@ class ProgressModal extends Component {
                     }
 
                     const person = {
-                        names: [],
-                        emails: [],
-                        phones: []
+                        names: []
                     }
         
                     const nameObject = {};
@@ -81,7 +79,17 @@ class ProgressModal extends Component {
                         ) {
                             if (row[key]) {
                                 const arrayProperty = propertyDictionary[key];
-                                person[arrayProperty].push(row[key]);
+                                if (key === "Phone1" || key === "Phone2") {
+                                    if (!person.phones) {
+                                        person.phones = [];
+                                    }
+                                    person[arrayProperty].push({ raw: row[key] });
+                                } else if (key === "Email1" || key === "Email2") {
+                                    if (!person.emails) {
+                                        person.emails = [];
+                                    }
+                                    person[arrayProperty].push({ address: row[key] });
+                                }
                             }
                         }
                     }
@@ -94,7 +102,7 @@ class ProgressModal extends Component {
                     const requestObject = { person: JSON.stringify(person), key: window.process.env.PIPL_API_KEY };
                     const queryString = qs.stringify(requestObject);
                     const newRow = await this.getNewRow(queryString, row);
-                    console.log('writing to row:', row.id);
+                    console.log('writing to row:', person);
                     App.state.totalRows[row.id] = Object.assign(row, newRow);
                     this.setState({ completedSearches: index + 1 }, () => window.dispatchEvent(new Event('resize')));
 
@@ -149,7 +157,7 @@ class ProgressModal extends Component {
                         "Last Name": (possiblePerson.names || [])[0] ? possiblePerson.names[0].last : "",
                         "Email1": (possiblePerson.emails || [])[0] ? possiblePerson.emails[0].address : "",
                         "Email2": (possiblePerson.emails || [])[1] ? possiblePerson.emails[1].address : "",
-                        "Phone1": (possiblePerson.phones || [])[0] ? possiblePerson.phones[0].display : "",
+                        "Phone1": (possiblePerson.phones || [])[0] ? possiblePerson.phones[0].number : "",
                         "Phone2": (possiblePerson.phones || [])[1] ? possiblePerson.phones[1].display : "",
                         "Mailing Address": (possiblePerson.addresses || [])[0] ? possiblePerson.addresses[0].display : "",
                         "Education": (possiblePerson.educations || [])[0] ? possiblePerson.educations[0].display : "",

@@ -119,33 +119,37 @@ class ReviewModal extends Component {
                                                 (<Card.Meta>Match confidence level: {person['@match']}</Card.Meta>)
                                             }
                                         </Card.Content>
-                                        {(person.gender || person.usernames || person.addresses || person.dob || person.educations || person.jobs) &&
-                                            <Card.Content>
-                                                <List bulleted>
-                                                    {person.names && person.names[0] &&
-                                                        (<List.Item>Names: {person.names.map(name => name.display).join(", ")}</List.Item>)
-                                                    }
-                                                    {person.gender && person.gender.content &&
-                                                        (<List.Item>Gender: {person.gender.content}</List.Item>)
-                                                    }
-                                                    {person.usernames && person.usernames[0] &&
-                                                        (<List.Item>Usernames: {person.usernames.map(username => username.content).join(", ")}</List.Item>)
-                                                    }
-                                                    {person.dob &&
-                                                        (<List.Item>Age: {person.dob.display}</List.Item>)
-                                                    }
-                                                    {person.addresses && person.addresses[0] &&
-                                                        (<List.Item>Addresses: {person.addresses[0].display}</List.Item>)
-                                                    }
-                                                    {person.educations && person.educations[0] &&
-                                                        (<List.Item>Educations: {person.educations[0].display}</List.Item>)
-                                                    }
-                                                    {person.jobs && person.jobs[0] &&
-                                                        (<List.Item>Jobs: {person.jobs[0].display}</List.Item>)
-                                                    }
-                                                </List>
-                                            </Card.Content>
-                                        }
+                                        <Card.Content>
+                                            <List bulleted>
+                                                {person.names && person.names[0] &&
+                                                    (<List.Item>Names: {person.names.map(name => name.display).join(", ")}</List.Item>)
+                                                }
+                                                {person.gender && person.gender.content &&
+                                                    (<List.Item>Gender: {person.gender.content}</List.Item>)
+                                                }
+                                                {person.dob &&
+                                                    (<List.Item>Age: {person.dob.display}</List.Item>)
+                                                }
+                                                {person.usernames && person.usernames[0] &&
+                                                    (<List.Item>Usernames: {person.usernames.map(username => username.content).join(", ")}</List.Item>)
+                                                }
+                                                {person.phones && person.phones[0] &&
+                                                    (<List.Item>Phones: {person.phones.map(phone => phone.number).join(", ")}</List.Item>)
+                                                }
+                                                {person.emails && person.emails[0] &&
+                                                    (<List.Item>Emails: {person.emails.map(email => email.address).join(", ")}</List.Item>)
+                                                }
+                                                {person.addresses && person.addresses[0] &&
+                                                    (<List.Item>Addresses: {person.addresses.map(address => address.display).join(", ")}</List.Item>)
+                                                }
+                                                {person.educations && person.educations[0] &&
+                                                    (<List.Item>Educations: {person.educations.map(education => education.display).join(", ")}</List.Item>)
+                                                }
+                                                {person.jobs && person.jobs[0] &&
+                                                    (<List.Item>Jobs: {person.jobs.map(job => job.display).join(", ")}</List.Item>)
+                                                }
+                                            </List>
+                                        </Card.Content>
                                         <Card.Content extra>
                                             <Button onClick={this.openConfirmModal}>Replace</Button>
                                         </Card.Content>
