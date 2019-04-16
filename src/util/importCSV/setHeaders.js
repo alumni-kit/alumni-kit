@@ -17,7 +17,12 @@ const setHeaders = function(headers = []) {
         "Education": "Education",
         "Job": "Job"
     }
-    const mergedHeaders = Object.assign(requiredFields, ...headers.map(header => ({[header]: header})));
+    const mergedHeaders = Object.assign(requiredFields, ...headers.map(header => {
+        // Only render the expected fields. Any other fields are ignored.
+        if (Object.keys(requiredFields).includes(header)) {
+            return ({[header]: header});
+        }
+    }));
     const mergedHeadersArray = Object.keys(mergedHeaders);
 
     const columns = mergedHeadersArray.map((header) => {
