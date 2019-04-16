@@ -167,7 +167,7 @@ class ProgressModal extends Component {
                             combinedResult,
                             {
                                 "Status": { status, response: json, searchPointerResponse,  missingColumns, previousRow },
-                                "Last Update": new Date().toUTCString(),
+                                "Last Update": new Date().toLocaleString(),
                             }
                         );
                     } else {
@@ -175,7 +175,7 @@ class ProgressModal extends Component {
                         return Object.assign(
                             row,
                             { "Status": { status, response: json, missingColumns, previousRow },
-                            "Last Update": new Date().toUTCString()
+                            "Last Update": new Date().toLocaleString()
                         });
                     }
                 })
@@ -183,7 +183,7 @@ class ProgressModal extends Component {
                     return Object.assign(
                         previousRow,
                         { "Status": { status: "Error", response: err, previousRow },
-                        "Last Update": new Date().toUTCString() 
+                        "Last Update": new Date().toLocaleString() 
                     });
                 });
             });

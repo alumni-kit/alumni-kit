@@ -30,7 +30,8 @@ const generateFileMenu = (reactAppContext) => {
                 fs.readFile(filePath, { encoding: "utf-8" }, (err, data) => {
                   if (err) throw err;
     
-                  const { columns, rows } = JSON.parse(data);
+                  const { columns, totalRows } = JSON.parse(data);
+                  const rows = JSON.parse(JSON.stringify(totalRows));
     
                   const formattedColumns = columns.map((column) => {
                     if (column.name === "Status") {
@@ -40,7 +41,7 @@ const generateFileMenu = (reactAppContext) => {
                     return column;
                   });
     
-                  reactAppContext.setState({ columns: formattedColumns, rows, filePath });
+                  reactAppContext.setState({ columns: formattedColumns, rows, totalRows, filePath });
                 })
               });
             }
