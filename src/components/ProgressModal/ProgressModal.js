@@ -165,13 +165,11 @@ class ProgressModal extends Component {
                     }
 
                     if (!possiblePerson.emails) {
-                        const searchPointerResponse = await this.getSearchPointerResponse(row);
-                        console.log({ searchPointerResponse });
-
-                        const possiblePerson = searchPointerResponse.person;
+                        const searchPointerResponse = await this.getSearchPointerResponse(possiblePerson['@search_pointer']);
+                        const searchPointerResponsePerson = searchPointerResponse.person;
                         const emailObject = {
-                            "Email1": (possiblePerson && possiblePerson.emails || [])[0] ? possiblePerson.emails[0].address : "",
-                            "Email2": (possiblePerson && possiblePerson.emails || [])[1] ? possiblePerson.emails[1].address : "",
+                            "Email1": (searchPointerResponsePerson && searchPointerResponsePerson.emails || [])[0] ? searchPointerResponsePerson.emails[0].address : "",
+                            "Email2": (searchPointerResponsePerson && searchPointerResponsePerson.emails || [])[1] ? searchPointerResponsePerson.emails[1].address : "",
                         };
 
                         const combinedResult = Object.assign(row, emailObject);
@@ -207,7 +205,7 @@ class ProgressModal extends Component {
             });
     }
     
-    getSearchPointerResponse = async (row) => {
+    getSearchPointerResponse = async (searchPointer) => {
         return await Promise.delay(250).then(() =>  {
             return fetch('/temp/search_pointer_response.json')
                 .then(response => response.json())
