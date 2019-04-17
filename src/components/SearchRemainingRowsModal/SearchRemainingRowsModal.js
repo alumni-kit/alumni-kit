@@ -31,7 +31,7 @@ class SearchRemainingRowsModal extends Component {
 
     searchAllRows = () => {
         const { totalRows } = this.props.App.state;
-        this.props.App.setState({ rows: JSON.parse(JSON.stringify(totalRows)) });
+        this.props.App.setState({ rows: totalRows });
         this.openConfirmModal();
     }
 
