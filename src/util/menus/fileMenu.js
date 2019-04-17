@@ -24,7 +24,7 @@ const generateFileMenu = (reactAppContext) => {
               dialog.showOpenDialog({
                 filters: [{ name: 'JSON', extensions: ['json'] }],
                 properties: ['openFile']
-              }, (filePaths) => {
+              }, (filePaths = []) => {
                 const filePath = filePaths[0];
     
                 fs.readFile(filePath, { encoding: "utf-8" }, (err, data) => {

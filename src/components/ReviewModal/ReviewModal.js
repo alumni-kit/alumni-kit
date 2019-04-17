@@ -23,40 +23,42 @@ class ReviewModal extends Component {
                 <Header>Status: {this.props.App.state.selectedRow.Status && this.props.App.state.selectedRow.Status.status || "Not yet searched"}</Header>
                 <Divider />
                 <ul>
-                    <li>
-                        {this.props.App.state.selectedRow.Status && this.props.App.state.selectedRow.Status.previousRow &&
-                            <>
-                                <b>Updated Fields:</b>
-                                <ul>
-                                    {Object.entries(this.props.App.state.selectedRow).map((entry) => {
-                                        const property = entry[0];
-                                        const value = entry[1];
-                                        const previousRow = this.props.App.state.selectedRow.Status.previousRow || {};
-                                        if (typeof value !== "object" && previousRow[property] !== value) {
-                                            return (
-                                                <li>{property}: {previousRow[property] ||  <mark>previously blank</mark>} <Icon name="arrow right" /> {value || <mark>currently blank</mark>}</li>
-                                            )
-                                        }
-                                    })}
-                                </ul>
-                            </>
+                    {this.props.App.state.selectedRow.Status && this.props.App.state.selectedRow.Status.previousRow &&
+                        <li>
+                            <b>Fields:</b>
+                            <ul>
+                                {Object.entries(this.props.App.state.selectedRow).map((entry) => {
+                                    const property = entry[0];
+                                    const value = entry[1];
+                                    const previousRow = this.props.App.state.selectedRow.Status.previousRow || {};
+                                    if (typeof value !== "object" && previousRow[property] !== value) {
+                                        return (
+                                            <li>{property}: {previousRow[property] ||  <mark>previously blank</mark>} <Icon name="arrow right" /> {value || <mark>currently blank</mark>}</li>
+                                        )
+                                    } else if (typeof value !== "object") {
+                                        return (
+                                            <li>{property}: {JSON.stringify(value) || <mark>currently blank</mark>}</li>
+                                        )
+                                    }
+                                })}
+                            </ul>
+                        </li>
                         ||
-                            <>
-                                <b>Fields:</b>
-                                <ul>
-                                    {Object.entries(this.props.App.state.selectedRow).map((entry) => {
-                                        const property = entry[0];
-                                        const value = entry[1];
-                                        if (typeof value !== "object") {
-                                            return (
-                                                <li>{property}: {value || <mark>currently blank</mark>}</li>
-                                            )
-                                        }
-                                    })}
-                                </ul>
-                            </>
-                        }
-                    </li>
+                        <li>
+                            <b>Fields:</b>
+                            <ul>
+                                {Object.entries(this.props.App.state.selectedRow).map((entry) => {
+                                    const property = entry[0];
+                                    const value = entry[1];
+                                    if (typeof value !== "object") {
+                                        return (
+                                            <li>{property}: {value || <mark>currently blank</mark>}</li>
+                                        )
+                                    }
+                                })}
+                            </ul>
+                        </li>
+                    }
                     {this.props.App.state.selectedRow.Status && this.props.App.state.selectedRow.Status.missingColumns &&
                         this.props.App.state.selectedRow.Status.missingColumns.length > 0 &&
                         <li><b>Missing Fields:</b>

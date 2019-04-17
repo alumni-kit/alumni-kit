@@ -99,6 +99,7 @@ class ProgressModal extends Component {
                         person.addresses.push({ raw: row["Mailing Address"] });
                     }
         
+                    const previousRow = Object.assign({}, row);
                     const requestObject = { person: JSON.stringify(person), key: window.process.env.PIPL_API_KEY };
                     const queryString = qs.stringify(requestObject);
 
@@ -125,7 +126,7 @@ class ProgressModal extends Component {
                         combinedResult = Object.assign(
                             combinedResult,
                             {
-                                "Status": { status, response, searchPointerResponse,  missingColumns, previousRow: row },
+                                "Status": { status, response, searchPointerResponse,  missingColumns, previousRow },
                                 "Last Update": new Date().toLocaleString(),
                             }
                         );
@@ -133,7 +134,7 @@ class ProgressModal extends Component {
                         const { status, missingColumns } = this.determineStatus(newRow);
                         combinedResult = Object.assign(
                             newRow,
-                            { "Status": { status, response, missingColumns, previousRow: row },
+                            { "Status": { status, response, missingColumns, previousRow },
                             "Last Update": new Date().toLocaleString()
                         });
                     }
