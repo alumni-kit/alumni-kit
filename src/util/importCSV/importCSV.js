@@ -1,6 +1,5 @@
 import setHeaders from './setHeaders';
 import setRows from './setRows';
-import { reject } from 'q';
 const csvtojson = window.require('csvtojson');
 
 const importCSV = ({csvString, filePath, App}) => {

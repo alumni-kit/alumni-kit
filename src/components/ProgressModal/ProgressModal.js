@@ -102,21 +102,24 @@ class ProgressModal extends Component {
                     const previousRow = Object.assign({}, row);
                     const requestObject = { person: JSON.stringify(person), key: window.process.env.PIPL_API_KEY };
                     const queryString = qs.stringify(requestObject);
-
-                    // Performs initial request
-                    const { newRow, response } = await this.getNewRow(queryString);
-
-                    // If the initial request is missing emails, conduct a follow-up with the first search pointer
                     let combinedResult;
-                    if (!newRow.emails) {
-                        const searchPointerResponse = await this.getSearchPointerResponse(newRow['@search_pointer']);
+                
+                    if (App.state.selectedSearchPointer) {
+                        // If the initial request is missing emails, conduct a follow-up with the first search pointer
+                        const searchPointerResponse = await this.getSearchPointerResponse(App.state.selectedSearchPointer);
                         const searchPointerResponsePerson = searchPointerResponse.person;
-                        const emailObject = {
-                            "Email1": (searchPointerResponsePerson && searchPointerResponsePerson.emails || [])[0] ? searchPointerResponsePerson.emails[0].address : "",
-                            "Email2": (searchPointerResponsePerson && searchPointerResponsePerson.emails || [])[1] ? searchPointerResponsePerson.emails[1].address : "",
+                        combinedResult = {
+                            "First Name": (searchPointerResponsePerson.names || [])[0] ? searchPointerResponsePerson.names[0].first : row["First Name"],
+                            "Last Name": (searchPointerResponsePerson.names || [])[0] ? searchPointerResponsePerson.names[0].last : row["Last Name"],
+                            "Email1": (searchPointerResponsePerson.emails || [])[0] ? searchPointerResponsePerson.emails[0].address : row["Email1"],
+                            "Email2": (searchPointerResponsePerson.emails || [])[1] ? searchPointerResponsePerson.emails[1].address : row["Email2"],
+                            "Phone1": (searchPointerResponsePerson.phones || [])[0] ? searchPointerResponsePerson.phones[0].number : row["Phone1"],
+                            "Phone2": (searchPointerResponsePerson.phones || [])[1] ? searchPointerResponsePerson.phones[1].display : row["Phone2"],
+                            "Mailing Address": (searchPointerResponsePerson.addresses || [])[0] ? searchPointerResponsePerson.addresses[0].display : row["Mailing Address"],
+                            "Education": (searchPointerResponsePerson.educations || [])[0] ? searchPointerResponsePerson.educations[0].display : row["Education"],
+                            "Job": (searchPointerResponsePerson.jobs || [])[0] ? searchPointerResponsePerson.jobs[0].display : row["Job"]
                         };
 
-                        combinedResult = Object.assign(newRow, emailObject);
                         let { status, missingColumns } = this.determineStatus(combinedResult);
 
                         if (searchPointerResponse instanceof Error) {
@@ -126,18 +129,50 @@ class ProgressModal extends Component {
                         combinedResult = Object.assign(
                             combinedResult,
                             {
-                                "Status": { status, response, searchPointerResponse,  missingColumns, previousRow },
+                                "Status": { status, response: row.Status.response, searchPointerResponse,  missingColumns, previousRow },
                                 "Last Update": new Date().toLocaleString(),
                             }
                         );
+
+                        // Return the selectedSearchPointer back to its default value
+                        App.setState({ selectedSearchPointer: '' });
                     } else {
-                        const { status, missingColumns } = this.determineStatus(newRow);
-                        combinedResult = Object.assign(
-                            newRow,
-                            { "Status": { status, response, missingColumns, previousRow },
-                            "Last Update": new Date().toLocaleString()
-                        });
+                        // Performs initial request
+                        const { newRow, response } = await this.getNewRow(queryString);
+    
+                        // If the initial request is missing emails, conduct a follow-up with the first search pointer
+                        if (!newRow.emails) {
+                            const searchPointerResponse = await this.getSearchPointerResponse(newRow['@search_pointer']);
+                            const searchPointerResponsePerson = searchPointerResponse.person;
+                            const emailObject = {
+                                "Email1": (searchPointerResponsePerson && searchPointerResponsePerson.emails || [])[0] ? searchPointerResponsePerson.emails[0].address : "",
+                                "Email2": (searchPointerResponsePerson && searchPointerResponsePerson.emails || [])[1] ? searchPointerResponsePerson.emails[1].address : "",
+                            };
+    
+                            combinedResult = Object.assign(newRow, emailObject);
+                            let { status, missingColumns } = this.determineStatus(combinedResult);
+    
+                            if (searchPointerResponse instanceof Error) {
+                                status = "Error";
+                            }
+    
+                            combinedResult = Object.assign(
+                                combinedResult,
+                                {
+                                    "Status": { status, response, searchPointerResponse,  missingColumns, previousRow },
+                                    "Last Update": new Date().toLocaleString(),
+                                }
+                            );
+                        } else {
+                            const { status, missingColumns } = this.determineStatus(newRow);
+                            combinedResult = Object.assign(
+                                newRow,
+                                { "Status": { status, response, missingColumns, previousRow },
+                                "Last Update": new Date().toLocaleString()
+                            });
+                        }
                     }
+
 
                     // Write it to the main table
                     App.state.totalRows[row.id] = Object.assign(row, combinedResult);
@@ -149,7 +184,7 @@ class ProgressModal extends Component {
                         reject(`Paused at index: ${index}`);
                     }
 
-                    resolve(Object.assign(row, newRow));
+                    resolve(Object.assign(row, combinedResult));
                 });
             };
         });

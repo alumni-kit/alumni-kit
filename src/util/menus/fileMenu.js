@@ -1,7 +1,7 @@
 import StatusFormatter from 'util/formatters/statusFormatter';
 import importCSV from 'util/importCSV/importCSV';
 import writeToProjectFile from 'util/writeToProjectFile';
-import generateNewWindow from 'util/generateNewWindow';
+import clearAppState from 'util/clearAppState';
 
 const electron = window.require('electron');
 const { remote } = electron;
@@ -16,7 +16,7 @@ const generateFileMenu = (reactAppContext) => {
         submenu: [
           {
             label: "New Project",
-            click: generateNewWindow.bind(reactAppContext),
+            click: clearAppState.bind(reactAppContext),
           },
           {
             label: "Open Project",
@@ -41,6 +41,7 @@ const generateFileMenu = (reactAppContext) => {
                     return column;
                   });
     
+                  clearAppState.bind(reactAppContext)();
                   reactAppContext.setState({ columns: formattedColumns, rows, totalRows, filePath });
                 })
               });
@@ -77,7 +78,7 @@ const generateFileMenu = (reactAppContext) => {
                 properties: ['openFile']
               }, (filePaths) => {
                 const filePath = filePaths[0];
-    
+
                 importCSV({ filePath, App: reactAppContext});
               });
             }

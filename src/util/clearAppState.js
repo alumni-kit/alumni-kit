@@ -1,4 +1,4 @@
-const generateNewWindow = function() {
+const clearAppState = function() {
   const reactAppContext = this;
   reactAppContext.setState({
     columns: [],
@@ -8,14 +8,17 @@ const generateNewWindow = function() {
     openConfirmModal: false,
     openCompletionModal: false,
     openEarlyExitModal: false,
+    openPossibleMatchesModal: false,
     openProgressModal: false,
     openReviewModal: false,
+    openSearchRemainingRowsModal: false,
     piplApiKey: window.process.env.PIPL_API_KEY,
     rows: [],
     selectedRow: {},
+    selectedSearchPointer: '',
     totalRows: [],
     validPiplApiKey: true,
   });
 }
 
-export default generateNewWindow;
+export default clearAppState;

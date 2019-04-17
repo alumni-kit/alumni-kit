@@ -5,6 +5,7 @@ import generateMenu from './util/generateMenu';
 import CompletionModal from './components/CompletionModal/CompletionModal';
 import ConfirmModal from './components/ConfirmModal/ConfirmModal';
 import EarlyExitModal from './components/EarlyExitModal/EarlyExitModal';
+import PossibleMatchesModal from './components/PossibleMatchesModal/PossibleMatchesModal';
 import ProgressModal from './components/ProgressModal/ProgressModal';
 import ReviewModal from './components/ReviewModal/ReviewModal';
 import SearchRemainingRowsModal from './components/SearchRemainingRowsModal/SearchRemainingRowsModal';
@@ -25,12 +26,14 @@ class App extends Component {
     openConfirmModal: false,
     openCompletionModal: false,
     openEarlyExitModal: false,
+    openPossibleMatchesModal: false,
     openProgressModal: false,
     openReviewModal: false,
     openSearchRemainingRowsModal: false,
     piplApiKey: window.process.env.PIPL_API_KEY,
     rows: [],
     selectedRow: {},
+    selectedSearchPointer: '',
     totalRows: [],
     validPiplApiKey: true,
   }
@@ -130,6 +133,7 @@ class App extends Component {
       openCompletionModal,
       openConfirmModal,
       openEarlyExitModal,
+      openPossibleMatchesModal,
       openProgressModal,
       openReviewModal,
       openSearchRemainingRowsModal,
@@ -177,6 +181,7 @@ class App extends Component {
         <EarlyExitModal App={this} openEarlyExitModal={openEarlyExitModal} />
         <ReviewModal App={this} openReviewModal={openReviewModal} />
         <SearchRemainingRowsModal App={this} openSearchRemainingRowsModal={openSearchRemainingRowsModal} />
+        <PossibleMatchesModal App={this} openPossibleMatchesModal={openPossibleMatchesModal} />
       </div>
     );
   }
