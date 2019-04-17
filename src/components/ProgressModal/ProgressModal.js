@@ -101,11 +101,48 @@ class ProgressModal extends Component {
         
                     const requestObject = { person: JSON.stringify(person), key: window.process.env.PIPL_API_KEY };
                     const queryString = qs.stringify(requestObject);
-                    const newRow = await this.getNewRow(queryString, row);
-                    console.log('writing to row:', person);
-                    App.state.totalRows[row.id] = Object.assign(row, newRow);
+
+                    // Performs initial request
+                    const { newRow, response } = await this.getNewRow(queryString);
+
+                    // If the initial request is missing emails, conduct a follow-up with the first search pointer
+                    let combinedResult;
+                    if (!newRow.emails) {
+                        const searchPointerResponse = await this.getSearchPointerResponse(newRow['@search_pointer']);
+                        const searchPointerResponsePerson = searchPointerResponse.person;
+                        const emailObject = {
+                            "Email1": (searchPointerResponsePerson && searchPointerResponsePerson.emails || [])[0] ? searchPointerResponsePerson.emails[0].address : "",
+                            "Email2": (searchPointerResponsePerson && searchPointerResponsePerson.emails || [])[1] ? searchPointerResponsePerson.emails[1].address : "",
+                        };
+
+                        combinedResult = Object.assign(newRow, emailObject);
+                        let { status, missingColumns } = this.determineStatus(combinedResult);
+
+                        if (searchPointerResponse instanceof Error) {
+                            status = "Error";
+                        }
+
+                        combinedResult = Object.assign(
+                            combinedResult,
+                            {
+                                "Status": { status, response, searchPointerResponse,  missingColumns, previousRow: row },
+                                "Last Update": new Date().toLocaleString(),
+                            }
+                        );
+                    } else {
+                        const { status, missingColumns } = this.determineStatus(newRow);
+                        combinedResult = Object.assign(
+                            newRow,
+                            { "Status": { status, response, missingColumns, previousRow: row },
+                            "Last Update": new Date().toLocaleString()
+                        });
+                    }
+
+                    // Write it to the main table
+                    App.state.totalRows[row.id] = Object.assign(row, combinedResult);
                     this.setState({ completedSearches: index + 1 }, () => window.dispatchEvent(new Event('resize')));
 
+                    // If we're paused, break out of this series
                     if (this.state.pause) {
                         this.setState({ pauseIndex: index });
                         reject(`Paused at index: ${index}`);
@@ -128,22 +165,24 @@ class ProgressModal extends Component {
             .catch(err => console.warn(err));
     }
     
-    getNewRow = async (queryString, row) => {
-        const previousRow = JSON.parse(JSON.stringify(row));
+    getNewRow = async (queryString) => {
         return await Promise.delay(250).then(() =>  {
             return fetch('/temp/person.json')
                 .then(response => response.json())
                 .then(async json => {
+                    // If the response is a valid http response, but the code is an error
                     if (json && json["@http_status_code"] && json["@http_status_code"] !== 200) {
+                        // Show an error toast and store the response
                         const { App } = this.props;
                         App.showToast("error", `Error code: ${json["@http_status_code"]}, ${json["error"]}`);
-                        return Object.assign(
-                            previousRow,
-                            { "Status": { status: "Error", response: json, previousRow: null },
-                            "Last Update": new Date().toLocaleString()
-                        });
+                        return {
+                            "Status": { status: "Error", response: json },
+                            "Last Update": new Date().toLocaleString(),
+                        };
                     }
 
+                    // A response can either have an exact match, or a list of possible matches.
+                    // Take the first of possible matches if an exact match is not found.
                     let possiblePerson;
                     if (json.person) {
                         possiblePerson = json.person;
@@ -151,56 +190,27 @@ class ProgressModal extends Component {
                         possiblePerson = json.possible_persons[0];
                     }
 
-                    const row = {
-                        "Match Confidence": (possiblePerson["@match"]) ? possiblePerson["@match"] : "",
-                        "First Name": (possiblePerson.names || [])[0] ? possiblePerson.names[0].first : "",
-                        "Last Name": (possiblePerson.names || [])[0] ? possiblePerson.names[0].last : "",
-                        "Email1": (possiblePerson.emails || [])[0] ? possiblePerson.emails[0].address : "",
-                        "Email2": (possiblePerson.emails || [])[1] ? possiblePerson.emails[1].address : "",
-                        "Phone1": (possiblePerson.phones || [])[0] ? possiblePerson.phones[0].number : "",
-                        "Phone2": (possiblePerson.phones || [])[1] ? possiblePerson.phones[1].display : "",
-                        "Mailing Address": (possiblePerson.addresses || [])[0] ? possiblePerson.addresses[0].display : "",
-                        "Education": (possiblePerson.educations || [])[0] ? possiblePerson.educations[0].display : "",
-                        "Job": (possiblePerson.jobs || [])[0] ? possiblePerson.jobs[0].display : ""
-                    }
-
-                    if (!possiblePerson.emails) {
-                        const searchPointerResponse = await this.getSearchPointerResponse(possiblePerson['@search_pointer']);
-                        const searchPointerResponsePerson = searchPointerResponse.person;
-                        const emailObject = {
-                            "Email1": (searchPointerResponsePerson && searchPointerResponsePerson.emails || [])[0] ? searchPointerResponsePerson.emails[0].address : "",
-                            "Email2": (searchPointerResponsePerson && searchPointerResponsePerson.emails || [])[1] ? searchPointerResponsePerson.emails[1].address : "",
-                        };
-
-                        const combinedResult = Object.assign(row, emailObject);
-                        let { status, missingColumns } = this.determineStatus(combinedResult);
-
-                        if (searchPointerResponse instanceof Error) {
-                            status = "Error";
-                        }
-
-                        return Object.assign(
-                            combinedResult,
-                            {
-                                "Status": { status, response: json, searchPointerResponse,  missingColumns, previousRow },
-                                "Last Update": new Date().toLocaleString(),
-                            }
-                        );
-                    } else {
-                        const { status, missingColumns } = this.determineStatus(row);
-                        return Object.assign(
-                            row,
-                            { "Status": { status, response: json, missingColumns, previousRow },
-                            "Last Update": new Date().toLocaleString()
-                        });
+                    return {
+                        newRow: {
+                            "Match Confidence": (possiblePerson["@match"]) ? possiblePerson["@match"] : "",
+                            "First Name": (possiblePerson.names || [])[0] ? possiblePerson.names[0].first : "",
+                            "Last Name": (possiblePerson.names || [])[0] ? possiblePerson.names[0].last : "",
+                            "Email1": (possiblePerson.emails || [])[0] ? possiblePerson.emails[0].address : "",
+                            "Email2": (possiblePerson.emails || [])[1] ? possiblePerson.emails[1].address : "",
+                            "Phone1": (possiblePerson.phones || [])[0] ? possiblePerson.phones[0].number : "",
+                            "Phone2": (possiblePerson.phones || [])[1] ? possiblePerson.phones[1].display : "",
+                            "Mailing Address": (possiblePerson.addresses || [])[0] ? possiblePerson.addresses[0].display : "",
+                            "Education": (possiblePerson.educations || [])[0] ? possiblePerson.educations[0].display : "",
+                            "Job": (possiblePerson.jobs || [])[0] ? possiblePerson.jobs[0].display : ""
+                        },
+                        response: json,
                     }
                 })
                 .catch(err => {
-                    return Object.assign(
-                        previousRow,
-                        { "Status": { status: "Error", response: err, previousRow },
+                    return {
+                        "Status": { status: "Error", response: err },
                         "Last Update": new Date().toLocaleString() 
-                    });
+                    };
                 });
             });
     }
