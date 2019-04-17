@@ -141,7 +141,7 @@ class ProgressModal extends Component {
                         const { newRow, response } = await this.getNewRow(queryString);
     
                         // If the initial request is missing emails, conduct a follow-up with the first search pointer
-                        if (!newRow.emails) {
+                        if (newRow && !newRow.emails) {
                             const person = response.person || response.possible_persons[0];
                             const searchPointer = person['@search_pointer'];
                             const searchPointerResponse = await this.getSearchPointerResponse(searchPointer);
@@ -207,10 +207,10 @@ class ProgressModal extends Component {
         return await Promise.delay(250).then(() =>  {
             const url = `https://api.pipl.com/search/?${queryString}`;
             const options = {
-                method: 'GET' // Change to POST
+                method: 'GET'
             };
 
-            return fetch('/temp/person.json', options)
+            return fetch(url, options)
                 .then(response => response.json())
                 .then(async json => {
                     // If the response is a valid http response, but the code is an error
@@ -268,10 +268,10 @@ class ProgressModal extends Component {
 
             const url = `https://api.pipl.com/search/?${queryString}`;
             const options = {
-                method: 'GET' // Change to POST
+                method: 'POST' // Change to POST
             };
 
-            return fetch('/temp/search_pointer_response.json', options)
+            return fetch(url, options)
                 .then(response => response.json())
                 .catch(err => err);
         });
