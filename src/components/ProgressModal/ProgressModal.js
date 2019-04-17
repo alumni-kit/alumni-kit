@@ -142,7 +142,9 @@ class ProgressModal extends Component {
     
                         // If the initial request is missing emails, conduct a follow-up with the first search pointer
                         if (!newRow.emails) {
-                            const searchPointerResponse = await this.getSearchPointerResponse(newRow['@search_pointer']);
+                            const person = response.person || response.possible_persons[0];
+                            const searchPointer = person['@search_pointer'];
+                            const searchPointerResponse = await this.getSearchPointerResponse(searchPointer);
                             const searchPointerResponsePerson = searchPointerResponse.person;
                             const emailObject = {
                                 "Email1": (searchPointerResponsePerson && searchPointerResponsePerson.emails || [])[0] ? searchPointerResponsePerson.emails[0].address : "",
@@ -203,7 +205,12 @@ class ProgressModal extends Component {
     
     getNewRow = async (queryString) => {
         return await Promise.delay(250).then(() =>  {
-            return fetch('/temp/person.json')
+            const url = `https://api.pipl.com/search/?${queryString}`;
+            const options = {
+                method: 'GET' // Change to POST
+            };
+
+            return fetch('/temp/person.json', options)
                 .then(response => response.json())
                 .then(async json => {
                     // If the response is a valid http response, but the code is an error
@@ -253,7 +260,18 @@ class ProgressModal extends Component {
     
     getSearchPointerResponse = async (searchPointer) => {
         return await Promise.delay(250).then(() =>  {
-            return fetch('/temp/search_pointer_response.json')
+            const queryObject = {
+                search_pointer: searchPointer,
+                key: window.process.env.PIPL_API_KEY,
+            }
+            const queryString = qs.stringify(queryObject);
+
+            const url = `https://api.pipl.com/search/?${queryString}`;
+            const options = {
+                method: 'GET' // Change to POST
+            };
+
+            return fetch('/temp/search_pointer_response.json', options)
                 .then(response => response.json())
                 .catch(err => err);
         });
