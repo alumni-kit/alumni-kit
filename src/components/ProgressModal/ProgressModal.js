@@ -11,7 +11,6 @@ class ProgressModal extends Component {
         this.state = {
             open: false,
             completedSearches: 0,
-            status: "Searching...",
             totalSearches: 1,
             pause: false,
             pauseIndex: 0,
@@ -141,7 +140,7 @@ class ProgressModal extends Component {
                         const { newRow, response } = await this.getNewRow(queryString);
     
                         // If the initial request is missing emails, conduct a follow-up with the first search pointer
-                        if (newRow && !newRow.emails) {
+                        if (newRow && !newRow.emails && !(response instanceof Error)) {
                             const person = response.person || response.possible_persons[0];
                             const searchPointer = person['@search_pointer'];
                             const searchPointerResponse = await this.getSearchPointerResponse(searchPointer);
@@ -151,10 +150,12 @@ class ProgressModal extends Component {
                                 "Email2": (searchPointerResponsePerson && searchPointerResponsePerson.emails || [])[1] ? searchPointerResponsePerson.emails[1].address : "",
                             };
     
-                            combinedResult = Object.assign(newRow, emailObject);
+                            combinedResult = Object.assign(previousRow, newRow, emailObject);
                             let { status, missingColumns } = this.determineStatus(combinedResult);
     
                             if (searchPointerResponse instanceof Error) {
+                                // Show an error toast and store the response
+                                App.showToast("error", `Error: ${searchPointerResponse}`);
                                 status = "Error";
                             }
     
@@ -166,9 +167,10 @@ class ProgressModal extends Component {
                                 }
                             );
                         } else {
-                            const { status, missingColumns } = this.determineStatus(newRow);
+                            combinedResult = Object.assign(previousRow, newRow);
+                            const { status, missingColumns } = this.determineStatus(combinedResult);
                             combinedResult = Object.assign(
-                                newRow,
+                                combinedResult,
                                 { "Status": { status, response, missingColumns, previousRow },
                                 "Last Update": new Date().toLocaleString()
                             });
@@ -192,8 +194,7 @@ class ProgressModal extends Component {
         });
  
         promiseSerial(updatedRows)
-            .then(rows => {
-                this.setState({ status: "Complete" });
+            .then(() => {
                 window.dispatchEvent(new Event('resize'));
 
                 setTimeout(() => {
@@ -204,9 +205,9 @@ class ProgressModal extends Component {
     }
     
     getNewRow = async (queryString) => {
-        return await Promise.delay(250).then(() =>  {
+        return await Promise.delay(100).then(() =>  {
             const url = `https://api.pipl.com/search/?${queryString}`;
-            const options = {
+s            const options = {
                 method: 'GET'
             };
 
@@ -219,8 +220,11 @@ class ProgressModal extends Component {
                         const { App } = this.props;
                         App.showToast("error", `Error code: ${json["@http_status_code"]}, ${json["error"]}`);
                         return {
-                            "Status": { status: "Error", response: json },
-                            "Last Update": new Date().toLocaleString(),
+                            newRow: {
+                                "Status": { status: "Error", response: json },
+                                "Last Update": new Date().toLocaleString(),
+                            },
+                            response: new Error(`Error code: ${json["@http_status_code"]}, ${json["error"]}`),
                         };
                     }
 
@@ -253,16 +257,22 @@ class ProgressModal extends Component {
                     }
                 })
                 .catch(err => {
+                    // Show an error toast and store the response
+                    const { App } = this.props;
+                    App.showToast("error", `Error message: ${err.message}, Error stack: ${err.stack}`);
                     return {
-                        "Status": { status: "Error", response: err },
-                        "Last Update": new Date().toLocaleString() 
+                        newRow: {
+                            "Status": { status: "Error", response: err },
+                            "Last Update": new Date().toLocaleString(),
+                        },
+                        response: err,
                     };
                 });
             });
     }
     
     getSearchPointerResponse = async (searchPointer) => {
-        return await Promise.delay(250).then(() =>  {
+        return await Promise.delay(100).then(() =>  {
             const queryObject = {
                 key: window.process.env.PIPL_API_KEY,
             }
@@ -289,7 +299,7 @@ class ProgressModal extends Component {
         });
     };
 
-    determineStatus = (row) => {
+    determineStatus = (row = {}) => {
         let status = "Complete";
         let missingColumns = [];
         for (let column in row) {
@@ -302,14 +312,17 @@ class ProgressModal extends Component {
             status = "Partial";
         }
 
+        // Don't overwrite an error
+        if (row.Status && row.Status.status === "Error") {
+            status = "Error";
+        }
+
         return { status, missingColumns };
     }
 
     togglePauseResume = () => {
-        const searchStatus = this.state.pause === false ? "Paused." : "Searching...";
         this.setState({
             pause: !this.state.pause,
-            status: searchStatus,
         }, () => {
             if (!this.state.pause) {
                 this.startPiplSearch();
@@ -333,7 +346,6 @@ class ProgressModal extends Component {
             >
             <Modal.Header>PROGRESS</Modal.Header>
             <Modal.Content className="progress-modal__content">
-                <Container textAlign="center">{this.state.status}</Container>
                 <Progress percent={Math.round(completedSearches / totalSearches * 100)} active color="blue" success={success} progress="percent" />
                 <Container textAlign="right">{completedSearches} / {totalSearches} searches</Container>
             </Modal.Content>

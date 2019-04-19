@@ -79,7 +79,7 @@ class ReviewModal extends Component {
                                     <li>
                                         <b>Initial Search: </b>
                                         {this.props.App.state.selectedRow.Status.response["@http_status_code"] &&
-                                            <span>{this.props.App.state.selectedRow.Status.response["@http_status_code"]} - </span>
+                                            <span>{this.props.App.state.selectedRow.Status.response["@http_status_code"]} - {this.props.App.state.selectedRow.Status.response["error"]}</span>
                                         }
                                         {this.props.App.state.selectedRow.Status.response.message || this.props.App.state.selectedRow.Status.response.error}
                                     </li>
