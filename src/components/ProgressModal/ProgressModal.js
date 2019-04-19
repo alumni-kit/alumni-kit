@@ -207,7 +207,7 @@ class ProgressModal extends Component {
     getNewRow = async (queryString) => {
         return await Promise.delay(100).then(() =>  {
             const url = `https://api.pipl.com/search/?${queryString}`;
-s            const options = {
+            const options = {
                 method: 'GET'
             };
 
