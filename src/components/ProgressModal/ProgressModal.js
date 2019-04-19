@@ -122,13 +122,14 @@ class ProgressModal extends Component {
                         let { status, missingColumns } = this.determineStatus(combinedResult);
 
                         if (searchPointerResponse instanceof Error) {
+                            App.showToast("error", `Error: ${searchPointerResponse}`);
                             status = "Error";
                         }
 
                         combinedResult = Object.assign(
                             combinedResult,
                             {
-                                "Status": { status, response: row.Status.response, searchPointerResponse,  missingColumns, previousRow },
+                                "Status": { status, response: previousRow.Status.response, searchPointerResponse,  missingColumns, previousRow },
                                 "Last Update": new Date().toLocaleString(),
                             }
                         );
