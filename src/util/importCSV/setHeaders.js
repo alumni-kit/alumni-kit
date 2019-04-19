@@ -5,7 +5,7 @@ const setHeaders = function(headers = []) {
     const requiredFields = {
         "id": "id",
         "Status": "Status",
-        "Match Confidence": "Match Confidence",
+        "Number of Possible Matches": "Number of Possible Matches",
         "Last Update": "Last Update",
         "First Name": "First Name",
         "Last Name": "Last Name",

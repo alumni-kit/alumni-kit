@@ -227,15 +227,18 @@ class ProgressModal extends Component {
                     // A response can either have an exact match, or a list of possible matches.
                     // Take the first of possible matches if an exact match is not found.
                     let possiblePerson;
+                    let numberOfPossibleMatches = 0;
                     if (json.person) {
                         possiblePerson = json.person;
+                        numberOfPossibleMatches = 1;
                     } else if (json.possible_persons && json.possible_persons.length > 0) {
                         possiblePerson = json.possible_persons[0];
+                        numberOfPossibleMatches = json.possible_persons.length;
                     }
 
                     return {
                         newRow: {
-                            "Match Confidence": (possiblePerson["@match"]) ? possiblePerson["@match"] : "",
+                            "Number of Possible Matches": numberOfPossibleMatches || 0,
                             "First Name": (possiblePerson.names || [])[0] ? possiblePerson.names[0].first : "",
                             "Last Name": (possiblePerson.names || [])[0] ? possiblePerson.names[0].last : "",
                             "Email1": (possiblePerson.emails || [])[0] ? possiblePerson.emails[0].address : "",
@@ -261,14 +264,23 @@ class ProgressModal extends Component {
     getSearchPointerResponse = async (searchPointer) => {
         return await Promise.delay(250).then(() =>  {
             const queryObject = {
-                search_pointer: searchPointer,
                 key: window.process.env.PIPL_API_KEY,
             }
+            const searchPointerQueryObject = {
+                search_pointer: searchPointer,
+            }
             const queryString = qs.stringify(queryObject);
+            const searchPointerQueryString = qs.stringify(searchPointerQueryObject);
+
+            const searchParameters = new URLSearchParams(searchPointerQueryString);
 
             const url = `https://api.pipl.com/search/?${queryString}`;
             const options = {
-                method: 'POST' // Change to POST
+                method: 'POST',
+                body: searchParameters,
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
             };
 
             return fetch(url, options)

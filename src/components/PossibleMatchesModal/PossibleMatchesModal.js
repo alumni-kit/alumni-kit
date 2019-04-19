@@ -38,7 +38,7 @@ class PossibleMatchesModal extends Component {
                                             (<Card.Header>{person.names[0].display}</Card.Header>)
                                         }
                                         {person['@match'] &&
-                                            (<Card.Meta>Match confidence level: {person['@match']}</Card.Meta>)
+                                            (<Card.Meta>Number of Possible Matches level: {person['@match']}</Card.Meta>)
                                         }
                                     </Card.Content>
                                     <Card.Content>

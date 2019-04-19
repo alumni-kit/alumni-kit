@@ -101,7 +101,6 @@ const generateFileMenu = (reactAppContext) => {
                   return row;
                 });
 
-                debugger;
                 const parser = new jsontocsv({ fields });
                 const csv = parser.parse(rows);
                 fs.writeFile(filePath, csv, (err) => {

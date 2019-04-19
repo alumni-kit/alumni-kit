@@ -74,7 +74,7 @@ class App extends Component {
 
     this.state.totalRows.forEach(row => {
       if (typeof row.Status === "object" && row.Status.status && row["Last Update"]) {
-          if (row.Status.status === "Complete") {
+          if (row.Status.status === "Complete" || row.Status.status === "Partial") {
               completedSearches++;
           }
       }
