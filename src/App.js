@@ -15,7 +15,9 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
 
+const electron = window.require('electron');
 const fs = window.require("fs");
+const userDataPath = (electron.app || electron.remote.app).getPath('userData');
 
 class App extends Component {
   state = {
@@ -30,7 +32,7 @@ class App extends Component {
     openProgressModal: false,
     openReviewModal: false,
     openSearchRemainingRowsModal: false,
-    piplApiKey: window.process.env.PIPL_API_KEY,
+    piplApiKey: '',
     rows: [],
     selectedRow: {},
     selectedSearchPointer: '',
@@ -39,11 +41,25 @@ class App extends Component {
   }
   
   componentDidMount() {
-    const PIPL_API_KEY = window.process.env.PIPL_API_KEY;
+    fs.readFile(`${userDataPath}/apiKey`, 'utf8', (err, piplApiKey) => {
+      if (err) {
+        fs.writeFile(`${userDataPath}/apiKey`, "", (err) => {
+          if (err) {
+            this.showToast("error", err.message);
+            throw err;
+          }
 
-    if (PIPL_API_KEY === "" || typeof PIPL_API_KEY === undefined) {
-      this.openApiKeyModal(PIPL_API_KEY);
-    }
+          this.openApiKeyModal("");
+        });
+        throw err;
+      }
+
+      this.setState({ piplApiKey });
+
+      if (piplApiKey === "" || typeof piplApiKey === undefined) {
+        this.openApiKeyModal(piplApiKey);
+      }
+    });
 
     generateMenu(this);
   }
@@ -90,11 +106,12 @@ class App extends Component {
   savePiplApiKey = () => {
     const { piplApiKey } = this.state;
 
-    fs.writeFile(".env", `PIPL_API_KEY=${piplApiKey}`, (err) => {
+    fs.writeFile(`${userDataPath}/apiKey`, piplApiKey, (err) => {
       if (err) {
+        this.showToast("error", err.message);
         throw err;
       }
-      window.process.env.PIPL_API_KEY = piplApiKey;
+
       this.closeApiKeyModal();
       this.showToast("success", "Pipl API key is updated.");
     });

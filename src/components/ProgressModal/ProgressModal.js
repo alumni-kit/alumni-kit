@@ -99,7 +99,7 @@ class ProgressModal extends Component {
                     }
         
                     const previousRow = Object.assign({}, row);
-                    const requestObject = { person: JSON.stringify(person), key: window.process.env.PIPL_API_KEY };
+                    const requestObject = { person: JSON.stringify(person), key: App.state.piplApiKey };
                     const queryString = qs.stringify(requestObject);
                     let combinedResult;
                 
@@ -274,8 +274,9 @@ class ProgressModal extends Component {
     
     getSearchPointerResponse = async (searchPointer) => {
         return await Promise.delay(100).then(() =>  {
+            const { App } = this.props;
             const queryObject = {
-                key: window.process.env.PIPL_API_KEY,
+                key: App.state.piplApiKey,
             }
             const searchPointerQueryObject = {
                 search_pointer: searchPointer,

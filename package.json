@@ -5,11 +5,11 @@
   "description": "A minimal Electron application",
   "homepage": "./",
   "private": true,
+  "productName": "Alumni Address Book",
   "dependencies": {
     "bluebird": "^3.5.3",
     "csvtojson": "^2.0.8",
     "dotenv": "^6.2.0",
-    "electron": "^4.0.5",
     "json2csv": "^4.3.5",
     "promise-serial": "^0.1.5",
     "qs": "^6.6.0",
@@ -29,7 +29,8 @@
     "eject": "react-scripts eject",
     "electron": "electron .",
     "dev": "export BROWSER=none && nf start",
-    "install-wsl": "export npm_config_platform=win32 && npm install"
+    "install-wsl": "export npm_config_platform=win32 && npm install",
+    "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=public/address-book.icns --prune=true --out=release-builds"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -41,6 +42,8 @@
     "not op_mini all"
   ],
   "devDependencies": {
+    "electron": "^4.1.4",
+    "electron-packager": "^13.1.1",
     "foreman": "^3.0.1"
   }
 }

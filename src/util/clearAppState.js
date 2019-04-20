@@ -12,7 +12,6 @@ const clearAppState = function() {
     openProgressModal: false,
     openReviewModal: false,
     openSearchRemainingRowsModal: false,
-    piplApiKey: window.process.env.PIPL_API_KEY,
     rows: [],
     selectedRow: {},
     selectedSearchPointer: '',
