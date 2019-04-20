@@ -32,8 +32,7 @@
     "install-wsl": "export npm_config_platform=win32 && npm install",
     "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=public/address-book.icns --prune=true --out=release-builds",
     "package-win": "electron-packager . --overwrite --asar --platform=win32 --arch=ia32 --icon=public/address-book.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"Alumni Address Book\"",
-    "create-installer-mac": "electron-installer-dmg ./release-builds/Alumni\\ Address\\ Book-darwin-x64/Alumni\\ Address\\ Book.app alumni-address-book-app --out=release-builds --overwrite --icon=public/address-book.icns",
-    "create-installer-win": "node installers/windows/createinstaller.js"
+    "create-installer-mac": "electron-installer-dmg ./release-builds/Alumni\\ Address\\ Book-darwin-x64/Alumni\\ Address\\ Book.app alumni-address-book-app --out=release-builds --overwrite --icon=public/address-book.icns"
   },
   "eslintConfig": {
     "extends": "react-app"
