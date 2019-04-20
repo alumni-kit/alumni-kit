@@ -17,7 +17,12 @@ class ConfirmModal extends Component {
         const { App } = this.props;
 
         const numberOfSearches = App.state.rows.length;
-        const chargePerSearch = 0.80;
+        let chargePerSearch = 0.80;
+
+        if (App.state.selectedSearchPointer) {
+            chargePerSearch = 0.40;
+        }
+
         const estimatedCost = (numberOfSearches * chargePerSearch).toFixed(2);
 
         return estimatedCost;
@@ -29,6 +34,11 @@ class ConfirmModal extends Component {
 
     render() {
         const { App } = this.props;
+        let estimateHelper = `${App.state.rows.length} row(s) x ($0.40/initial search + $0.40/follow up search) ~= $${this.calculateEstimatedCost()}`;
+
+        if (App.state.selectedSearchPointer) {
+            estimateHelper = `${App.state.rows.length} row(s) x ($0.40/follow up search) ~= $${this.calculateEstimatedCost()}`;
+        }
         return (
             <>
                 <Modal
@@ -40,8 +50,8 @@ class ConfirmModal extends Component {
                 >
                     <Modal.Header>Confirm</Modal.Header>
                     <Modal.Content className="confirm-modal__content">
-                        <p>{App.state.rows.length} searches</p>
-                        <b>Estimated Cost: ${this.calculateEstimatedCost()} <Popup trigger={<Icon name="info circle" />} content={`${App.state.rows.length} searches x $0.80/search ~= $${this.calculateEstimatedCost()}`} /></b>
+                        <p>{App.state.rows.length} row(s) to search</p>
+                        <b>Estimated Cost: ${this.calculateEstimatedCost()} <Popup trigger={<Icon name="info circle" />} content={estimateHelper} /></b>
                     </Modal.Content>
                     <Modal.Actions>
                         <Button onClick={this.openProgressModal}>Start Pipl Search</Button>

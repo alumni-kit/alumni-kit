@@ -20,7 +20,7 @@ class ProgressModal extends Component {
     componentWillReceiveProps(props) {
         this.setState({ open: props.openProgressModal, totalSearches: props.App.state.rows.length });
 
-        if (props.openProgressModal) {
+        if (props.openProgressModal && !this.props.openProgressModal) {
             this.setState({ completedSearches: 0, pauseIndex: 0 });
             this.startPiplSearch();
         }
@@ -133,13 +133,10 @@ class ProgressModal extends Component {
                                 "Last Update": new Date().toLocaleString(),
                             }
                         );
-
-                        // Return the selectedSearchPointer back to its default value
-                        App.setState({ selectedSearchPointer: '' });
                     } else {
                         // Performs initial request
                         const { newRow, response } = await this.getNewRow(queryString);
-    
+
                         // If the initial request is missing emails, conduct a follow-up with the first search pointer
                         if (newRow && !newRow.emails && !(response instanceof Error)) {
                             const person = response.person || response.possible_persons[0];
@@ -182,6 +179,9 @@ class ProgressModal extends Component {
                     // Write it to the main table
                     App.state.totalRows[row.id] = Object.assign(row, combinedResult);
                     this.setState({ completedSearches: index + 1 }, () => window.dispatchEvent(new Event('resize')));
+
+                    // Return the selectedSearchPointer back to its default value
+                    App.setState({ selectedSearchPointer: '' });
 
                     // If we're paused, break out of this series
                     if (this.state.pause) {

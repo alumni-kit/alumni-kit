@@ -7,9 +7,9 @@ class EarlyExitModal extends Component {
 
         this.state = {
             dimmerActive: true,
-            completedSearches: null,
-            partialSearches: null,
-            errorSearches: null,
+            completedSearches: 0,
+            partialSearches: 0,
+            errorSearches: 0,
             open: false
         }
     }
@@ -60,10 +60,10 @@ class EarlyExitModal extends Component {
                 <p>{this.state.completedSearches} completed matches</p>
                 <p>{this.state.partialSearches} partial matches</p>
                 <p>{this.state.errorSearches} errors</p>
-                <p>{App.state.totalRows.length - this.state.completedSearches} rows left unsearched</p>
+                <p>{App.state.totalRows.length - (this.state.completedSearches + this.state.partialSearches + this.state.errorSearches)} rows left unsearched</p>
             </Modal.Content>
             <Modal.Actions>
-                <Button color="yellow" onClick={this.close}>Continue</Button>
+                <Button color="yellow" onClick={this.close}>Exit</Button>
             </Modal.Actions>
           </Modal>
         );

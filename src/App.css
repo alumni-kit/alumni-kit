@@ -56,7 +56,7 @@
 }
 
 .rdg-selected {
-  border: 0px;
+  border: 0px !important;
 }
 
 #dropzone {
