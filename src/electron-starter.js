@@ -3,9 +3,6 @@ const {app, BrowserWindow } = require('electron');
 const path = require('path');
 const url = require('url');
 
-// const port = 5000;
-// process.env.ELECTRON_START_URL = `http://localhost:${port}`;
-
 const startUrl = process.env.ELECTRON_START_URL || url.format({
   pathname: path.join(__dirname, '/../build/index.html'),
   protocol: 'file:',
