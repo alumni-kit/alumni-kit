@@ -57,10 +57,26 @@ class EarlyExitModal extends Component {
                 <Dimmer active={this.state.dimmerActive}>
                     <Loader />
                 </Dimmer>
-                <p>{this.state.completedSearches} completed matches</p>
-                <p>{this.state.partialSearches} partial matches</p>
-                <p>{this.state.errorSearches} errors</p>
-                <p>{App.state.totalRows.length - (this.state.completedSearches + this.state.partialSearches + this.state.errorSearches)} rows left unsearched</p>
+                {this.props.App.state.rows.length === 1 ?
+                    <>
+                        {this.state.completedSearches ?
+                            <p>{this.state.completedSearches} complete match</p> : ""                     
+                        }
+                        {this.state.partialSearches ?
+                            <p>{this.state.partialSearches} partial match</p> : ""
+                        }
+                        {this.state.errorSearches ?
+                            <p>{this.state.errorSearches} error</p> : ""
+                        }
+                    </>
+                :
+                    <>
+                        <p>{this.state.completedSearches} complete match{this.state.completedSearches.length === 1 ? "" : "es"}</p>
+                        <p>{this.state.partialSearches} partial match{this.state.partialSearches.length === 1 ? "" : "es"}</p>
+                        <p>{this.state.errorSearches} error{this.state.errorSearches.length === 1 ? "" : "s"}</p>
+                    </>
+                }
+                <p>{App.state.totalRows.length - (this.state.completedSearches + this.state.partialSearches + this.state.errorSearches)} row(s) left unsearched</p>
             </Modal.Content>
             <Modal.Actions>
                 <Button color="yellow" onClick={this.close}>Exit</Button>

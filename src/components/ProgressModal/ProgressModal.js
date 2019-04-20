@@ -98,7 +98,14 @@ class ProgressModal extends Component {
                         person.addresses.push({ raw: row["Mailing Address"] });
                     }
         
-                    const previousRow = Object.assign({}, row);
+                    const previousRow = {};
+
+                    for (let column in row) {
+                        if (column !== "Status") {
+                            previousRow[column] = row[column];
+                        }
+                    }
+
                     const requestObject = { person: JSON.stringify(person), key: App.state.piplApiKey };
                     const queryString = qs.stringify(requestObject);
                     let combinedResult;
@@ -129,7 +136,7 @@ class ProgressModal extends Component {
                         combinedResult = Object.assign(
                             combinedResult,
                             {
-                                "Status": { status, response: previousRow.Status.response, searchPointerResponse,  missingColumns, previousRow },
+                                "Status": { status, response: row.Status.response, searchPointerResponse,  missingColumns, previousRow },
                                 "Last Update": new Date().toLocaleString(),
                             }
                         );
@@ -148,7 +155,7 @@ class ProgressModal extends Component {
                                 "Email2": (searchPointerResponsePerson && searchPointerResponsePerson.emails || [])[1] ? searchPointerResponsePerson.emails[1].address : "",
                             };
     
-                            combinedResult = Object.assign(previousRow, newRow, emailObject);
+                            combinedResult = Object.assign(row, newRow, emailObject);
                             let { status, missingColumns } = this.determineStatus(combinedResult);
     
                             if (searchPointerResponse instanceof Error) {
@@ -165,7 +172,7 @@ class ProgressModal extends Component {
                                 }
                             );
                         } else {
-                            combinedResult = Object.assign(previousRow, newRow);
+                            combinedResult = Object.assign(row, newRow);
                             const { status, missingColumns } = this.determineStatus(combinedResult);
                             combinedResult = Object.assign(
                                 combinedResult,
@@ -177,7 +184,7 @@ class ProgressModal extends Component {
 
 
                     // Write it to the main table
-                    App.state.totalRows[row.id] = Object.assign(row, combinedResult);
+                    App.state.totalRows[row.id] = combinedResult;
                     this.setState({ completedSearches: index + 1 }, () => window.dispatchEvent(new Event('resize')));
 
                     // Return the selectedSearchPointer back to its default value
@@ -349,7 +356,7 @@ class ProgressModal extends Component {
             <Modal.Header>PROGRESS</Modal.Header>
             <Modal.Content className="progress-modal__content">
                 <Progress percent={Math.round(completedSearches / totalSearches * 100)} active color="blue" success={success} progress="percent" />
-                <Container textAlign="right">{completedSearches} / {totalSearches} searches</Container>
+                <Container textAlign="right">{completedSearches} / {totalSearches} rows searched</Container>
             </Modal.Content>
             <Modal.Actions>
                 <Button onClick={this.togglePauseResume}>{this.state.pause ? "Resume" : "Pause"}</Button>

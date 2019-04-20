@@ -10,7 +10,11 @@ const writeToFile = function(filePath) {
     const project = JSON.stringify({ columns, totalRows });
   
     fs.writeFile(filePath, project, (err) => {
-        if (err) throw err;
+        if (err) {
+            reactAppContext.showToast("error", `Error: ${err.message}`);
+            throw err;
+        };
+        reactAppContext.showToast("success", "Saved");
     })
 };
 

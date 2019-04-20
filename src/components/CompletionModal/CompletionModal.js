@@ -7,9 +7,9 @@ class CompletionModal extends Component {
 
         this.state = {
             dimmerActive: true,
-            completedSearches: null,
-            partialSearches: null,
-            errorSearches: null,
+            completedSearches: 0,
+            partialSearches: 0,
+            errorSearches: 0,
             open: false
         }
     }
@@ -56,9 +56,25 @@ class CompletionModal extends Component {
                 <Dimmer active={this.state.dimmerActive}>
                     <Loader />
                 </Dimmer>
-                <p>{this.state.completedSearches} complete matches</p>
-                <p>{this.state.partialSearches} partial matches</p>
-                <p>{this.state.errorSearches} errors</p>
+                {this.props.App.state.rows.length === 1 ?
+                    <>
+                        {this.state.completedSearches ?
+                            <p>{this.state.completedSearches} complete match</p> : ""                     
+                        }
+                        {this.state.partialSearches ?
+                            <p>{this.state.partialSearches} partial match</p> : ""
+                        }
+                        {this.state.errorSearches ?
+                            <p>{this.state.errorSearches} error</p> : ""
+                        }
+                    </>
+                :
+                    <>
+                        <p>{this.state.completedSearches} complete match{this.state.completedSearches.length === 1 ? "" : "es"}</p>
+                        <p>{this.state.partialSearches} partial match{this.state.partialSearches.length === 1 ? "" : "es"}</p>
+                        <p>{this.state.errorSearches} error{this.state.errorSearches.length === 1 ? "" : "s"}</p>
+                    </>
+                }
             </Modal.Content>
             <Modal.Actions>
                 <Button color="yellow" onClick={this.close}>Continue</Button>

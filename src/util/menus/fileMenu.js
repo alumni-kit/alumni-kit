@@ -28,7 +28,10 @@ const generateFileMenu = (reactAppContext) => {
                 const filePath = filePaths[0];
     
                 fs.readFile(filePath, { encoding: "utf-8" }, (err, data) => {
-                  if (err) throw err;
+                  if (err) {
+                    reactAppContext.showToast("error", `Error: ${err.message}`);
+                    throw err;
+                  };
     
                   const { columns, totalRows } = JSON.parse(data);
                   const rows = JSON.parse(JSON.stringify(totalRows));
@@ -43,6 +46,7 @@ const generateFileMenu = (reactAppContext) => {
     
                   clearAppState.bind(reactAppContext)();
                   reactAppContext.setState({ columns: formattedColumns, rows, totalRows, filePath });
+                  reactAppContext.showToast("success", `Opened: ${filePath}`);
                 })
               });
             }
@@ -104,7 +108,10 @@ const generateFileMenu = (reactAppContext) => {
                 const parser = new jsontocsv({ fields });
                 const csv = parser.parse(rows);
                 fs.writeFile(filePath, csv, (err) => {
-                  if (err) throw err;
+                  if (err) {
+                    reactAppContext.showToast("error", `Error: ${err.message}`);
+                    throw err;
+                  };
                 })
               });
             }
