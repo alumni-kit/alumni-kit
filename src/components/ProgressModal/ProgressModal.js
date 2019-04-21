@@ -134,7 +134,7 @@ class ProgressModal extends Component {
                         }
 
                         combinedResult = Object.assign(
-                            combinedResult,
+                            row,
                             {
                                 "Status": { status, response: row.Status.response, searchPointerResponse,  missingColumns, previousRow },
                                 "Last Update": new Date().toLocaleString(),
