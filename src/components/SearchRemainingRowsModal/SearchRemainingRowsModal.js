@@ -55,8 +55,8 @@ class SearchRemainingRowsModal extends Component {
                         <p>There are {this.state.remainingRows.length} rows still unsearched. Would you like to search the remaining rows?</p>
                     </Modal.Content>
                     <Modal.Actions>
-                        <Button onClick={this.searchRemainingRows}>Search remaining rows</Button>
-                        <Button onClick={this.searchAllRows}>Search all rows</Button>
+                        <Button primary onClick={this.searchRemainingRows}>Search remaining rows</Button>
+                        <Button primary onClick={this.searchAllRows}>Search all rows</Button>
                         <Button color="yellow" onClick={this.close}>Cancel</Button>
                     </Modal.Actions>
                 </Modal>

@@ -117,9 +117,9 @@ class ReviewModal extends Component {
                     {this.props.App.state.selectedRow.Status &&
                         this.props.App.state.selectedRow.Status.response &&
                             this.props.App.state.selectedRow.Status.response.possible_persons &&
-                                <Button color="blue" onClick={this.openPossibleMatchesModal}>Show All Possible Matches</Button>
+                                <Button primary onClick={this.openPossibleMatchesModal}>Show All Possible Matches</Button>
                     }
-                    <Button color="blue" onClick={this.openConfirmModal}>{this.props.App.state.selectedRow["Last Update"] ? "Retry" : "Search"}</Button>
+                    <Button primary onClick={this.openConfirmModal}>{this.props.App.state.selectedRow["Last Update"] ? "Retry" : "Search"}</Button>
                     <Button color="yellow" onClick={this.close}>Cancel</Button>
                 </Modal.Actions>
             </Modal>

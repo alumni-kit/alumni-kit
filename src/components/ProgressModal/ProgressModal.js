@@ -359,7 +359,7 @@ class ProgressModal extends Component {
                 <Container textAlign="right">{completedSearches} / {totalSearches} rows searched</Container>
             </Modal.Content>
             <Modal.Actions>
-                <Button onClick={this.togglePauseResume}>{this.state.pause ? "Resume" : "Pause"}</Button>
+                <Button primary onClick={this.togglePauseResume}>{this.state.pause ? "Resume" : "Pause"}</Button>
                 <Button color="yellow" onClick={this.close}>Exit</Button>
             </Modal.Actions>
           </Modal>

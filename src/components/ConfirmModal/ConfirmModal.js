@@ -54,7 +54,7 @@ class ConfirmModal extends Component {
                         <b>Estimated Cost: ${this.calculateEstimatedCost()} <Popup trigger={<Icon name="info circle" />} content={estimateHelper} /></b>
                     </Modal.Content>
                     <Modal.Actions>
-                        <Button onClick={this.openProgressModal}>Start Pipl Search</Button>
+                        <Button primary onClick={this.openProgressModal}>Start Pipl Search</Button>
                         <Button color="yellow" onClick={this.close}>Cancel</Button>
                     </Modal.Actions>
                 </Modal>

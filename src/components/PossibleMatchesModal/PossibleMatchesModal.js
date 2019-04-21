@@ -103,7 +103,7 @@ class PossibleMatchesModal extends Component {
                                         </List>
                                     </Card.Content>
                                     <Card.Content extra>
-                                        <Button onClick={this.replaceWithNewSearchPointer.bind(this, person['@search_pointer'])}>Update row with this match</Button>
+                                        <Button primary onClick={this.replaceWithNewSearchPointer.bind(this, person['@search_pointer'])}>Update row with this match</Button>
                                     </Card.Content>
                                 </Card>
                             )
