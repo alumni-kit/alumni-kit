@@ -1,6 +1,6 @@
 {
   "name": "alumni-kit",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "src/electron-starter.js",
   "description": "An app that lets you update alumni information from a CSV",
   "homepage": "./",
