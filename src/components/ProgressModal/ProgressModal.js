@@ -114,7 +114,7 @@ class ProgressModal extends Component {
                         // If the initial request is missing emails, conduct a follow-up with the first search pointer
                         const searchPointerResponse = await this.getSearchPointerResponse(App.state.selectedSearchPointer);
                         const searchPointerResponsePerson = searchPointerResponse.person;
-                        combinedResult = {
+                        combinedResult = Object.assign(row, {
                             "First Name": (searchPointerResponsePerson.names || [])[0] ? searchPointerResponsePerson.names[0].first : row["First Name"],
                             "Last Name": (searchPointerResponsePerson.names || [])[0] ? searchPointerResponsePerson.names[0].last : row["Last Name"],
                             "Email1": (searchPointerResponsePerson.emails || [])[0] ? searchPointerResponsePerson.emails[0].address : row["Email1"],
@@ -124,7 +124,7 @@ class ProgressModal extends Component {
                             "Mailing Address": (searchPointerResponsePerson.addresses || [])[0] ? searchPointerResponsePerson.addresses[0].display : row["Mailing Address"],
                             "Education": (searchPointerResponsePerson.educations || [])[0] ? searchPointerResponsePerson.educations[0].display : row["Education"],
                             "Job": (searchPointerResponsePerson.jobs || [])[0] ? searchPointerResponsePerson.jobs[0].display : row["Job"]
-                        };
+                        });
 
                         let { status, missingColumns } = this.determineStatus(combinedResult);
 
@@ -134,7 +134,7 @@ class ProgressModal extends Component {
                         }
 
                         combinedResult = Object.assign(
-                            row,
+                            combinedResult,
                             {
                                 "Status": { status, response: row.Status.response, searchPointerResponse,  missingColumns, previousRow },
                                 "Last Update": new Date().toLocaleString(),
@@ -216,7 +216,10 @@ class ProgressModal extends Component {
         return await Promise.delay(100).then(() =>  {
             const url = `https://api.pipl.com/search/?${queryString}`;
             const options = {
-                method: 'GET'
+                method: 'GET',
+                headers: {
+                    'Cache-Control': 'no-store'
+                }
             };
 
             return fetch(url, options)
@@ -299,7 +302,8 @@ class ProgressModal extends Component {
                 body: searchParameters,
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
-                },
+                    'Cache-Control': 'no-store'
+                }
             };
 
             return fetch(url, options)
