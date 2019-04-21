@@ -79,6 +79,7 @@ class App extends Component {
   }
 
   openReviewModal = (index, row, header) => {
+    if (index === -1) { return; }
     this.setState({ openReviewModal: true, selectedRow: row });
   }
 
