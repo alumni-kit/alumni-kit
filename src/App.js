@@ -1,3 +1,4 @@
+import AboutModal from "./components/AboutModal/AboutModal";
 import ApiKeyModal from "./components/ApiKeyModal/ApiKeyModal";
 import { Button, Header, Segment } from 'semantic-ui-react';
 import Dropzone from "./components/Dropzone/Dropzone";
@@ -24,6 +25,7 @@ class App extends Component {
     columns: [],
     fileName: '',
     filePath: '',
+    openAboutModal: false,
     openApiKeyModal: false,
     openConfirmModal: false,
     openCompletionModal: false,
@@ -66,6 +68,10 @@ class App extends Component {
 
   closeApiKeyModal = () => {
     this.setState({ openApiKeyModal: false, validPiplApiKey: true });
+  }
+
+  openAboutModal = () => {
+    this.setState({ openAboutModal: true });
   }
 
   openApiKeyModal = (piplApiKey) => {
@@ -146,6 +152,7 @@ class App extends Component {
     const {
       fileName,
       filePath,
+      openAboutModal,
       openApiKeyModal,
       openCompletionModal,
       openConfirmModal,
@@ -161,14 +168,6 @@ class App extends Component {
     return (
       <div className="app">
         <ToastContainer />
-        <ApiKeyModal
-          closeApiKeyModal={this.closeApiKeyModal}
-          openApiKeyModal={openApiKeyModal}
-          piplApiKey={piplApiKey}
-          validatePiplApiKey={this.validatePiplApiKey}
-          validPiplApiKey={validPiplApiKey}
-          updatePiplApiKey={this.updatePiplApiKey}
-        />
         {totalRows.length > 0 ? (
           <ReactDataGrid
             columns={this.state.columns}
@@ -192,6 +191,15 @@ class App extends Component {
         : (
           <Dropzone App={this} />
         )}
+        <AboutModal App={this} openAboutModal={openAboutModal} />
+        <ApiKeyModal
+          closeApiKeyModal={this.closeApiKeyModal}
+          openApiKeyModal={openApiKeyModal}
+          piplApiKey={piplApiKey}
+          validatePiplApiKey={this.validatePiplApiKey}
+          validPiplApiKey={validPiplApiKey}
+          updatePiplApiKey={this.updatePiplApiKey}
+        />
         <ConfirmModal App={this} openConfirmModal={openConfirmModal} />
         <ProgressModal App={this} openProgressModal={openProgressModal} />
         <CompletionModal App={this} openCompletionModal={openCompletionModal} />
