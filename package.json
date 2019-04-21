@@ -10,6 +10,7 @@
     "bluebird": "^3.5.3",
     "csvtojson": "^2.0.8",
     "dotenv": "^6.2.0",
+    "electron-context-menu": "^0.12.0",
     "json2csv": "^4.3.5",
     "promise-serial": "^0.1.5",
     "qs": "^6.6.0",
@@ -17,7 +18,7 @@
     "react-data-grid": "^6.0.2-0",
     "react-dom": "^16.8.3",
     "react-dropzone": "^10.0.4",
-    "react-scripts": "2.1.5",
+    "react-scripts": "^2.1.8",
     "react-toastify": "^4.5.2",
     "semantic-ui-css": "^2.4.1",
     "semantic-ui-react": "^0.85.0"
